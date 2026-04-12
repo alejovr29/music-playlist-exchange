@@ -27,7 +27,14 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <header>Encabezado</header>
+        <h1>Hola Mundo</h1>
+        {children}
+
+        <footer>Pie de página</footer>
+      </body>
+
     </html>
   );
 }

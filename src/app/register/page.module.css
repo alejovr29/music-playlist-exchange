@@ -1,0 +1,28 @@
+.probando {
+    display: block;
+    margin: 20px auto;
+    padding: 30px 15px;
+    color: rgb(255, 255, 255);
+    width: 50%;
+    border: 2px solid gray;
+    border-radius: 20px;
+    font-family: Arial, Helvetica, sans-serif;
+
+    & input {
+        display: block;
+        color: brown;
+        background-color: rgb(20, 149, 235);
+        margin: 10px 0 20px;
+        padding: 2px 5px;
+    }
+
+    & button {
+        background-color: blueviolet;
+        padding: 5px 10px;
+        border-radius: 5px;
+
+        &:hover {
+            background-color: burlywood;
+        }
+    }
+}
