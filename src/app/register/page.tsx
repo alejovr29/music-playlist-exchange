@@ -23,12 +23,12 @@ export default function RegisterPage() {
 
             if (response.ok) {
                 setSubmitStatus("success")
-                // Limpiar formulario si quieres
+                // Clear form fields
                 setName("")
                 setEmail("")
                 setPassword("")
 
-                // Ocultar mensaje después de 3 segundos
+                // Hide success message after 5 seconds
                 setTimeout(() => setSubmitStatus("idle"), 5000)
             } else {
                 setSubmitStatus("error")
@@ -47,7 +47,6 @@ export default function RegisterPage() {
             <div className="bg-slate-700 p-6 rounded border-amber-50 border-2">
 
                 <form className='w-full space-y-4' onSubmit={handleSubmit}>
-                    {/* Tus campos aquí... */}
                     <div>
                         <label>Name</label>
                         <input
@@ -68,9 +67,11 @@ export default function RegisterPage() {
                             onChange={(e) => setEmail(e.target.value)}
                             required
                         />
-                        <p className="hidden peer-invalid:block text-red-500 text-sm mt-1">
-                            Please provide a valid email address.
-                        </p>
+                        {email.length > 0 && (
+                            <p className="hidden peer-invalid:block text-red-500 text-sm mt-1">
+                                Please provide a valid email address.
+                            </p>
+                        )}
                     </div>
 
                     <div>
@@ -92,7 +93,7 @@ export default function RegisterPage() {
                     </button>
                 </form>
 
-                {/* Mensaje de confirmación con Tailwind + estado */}
+                {/* Confirmation message */}
                 {submitStatus === "success" && (
                     <div className="mt-8 mb-4 p-3 bg-green-500 text-black rounded text-center transition-all">
                         ✅ Account created successfully!
