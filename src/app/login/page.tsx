@@ -2,6 +2,7 @@
 
 import { signIn } from "next-auth/react";
 import { useState } from "react"
+import { useRouter } from "next/navigation";
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
@@ -15,6 +16,8 @@ export default function LoginPage() {
     })
 
     const [submitStatus, setSubmitStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
+
+    const router = useRouter();
 
     {/* Form submission handler that connects to the API */ }
     const handleSubmit = async (e: React.FormEvent) => {
@@ -50,6 +53,12 @@ export default function LoginPage() {
 
                 // Hide success message after 5 seconds
                 setTimeout(() => setSubmitStatus("idle"), 5000)
+
+                // Redirects after Signing in
+                setTimeout(() => {
+                    router.push("/dashboard"); // o "/"
+                }, 3000);
+
             } else {
                 setSubmitStatus("error")
                 setTimeout(() => setSubmitStatus("idle"), 5000)

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import SessionProviderWrapper from "../app/providers/SessionProviderWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,11 +29,13 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <header>Encabezado</header>
-        <h1>Hola Mundo</h1>
-        {children}
+        <SessionProviderWrapper>
+          <header>Encabezado</header>
+          <h1>Hola Mundo</h1>
+          {children}
 
-        <footer>Pie de página</footer>
+          <footer>Pie de página</footer>
+        </SessionProviderWrapper>
       </body>
 
     </html>
