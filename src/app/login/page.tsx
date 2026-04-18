@@ -1,5 +1,6 @@
 "use client";
 
+import { signIn } from "next-auth/react";
 import { useState } from "react"
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -21,15 +22,23 @@ export default function LoginPage() {
         setSubmitStatus("loading")
 
         try {
-            const response = await fetch("/api/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password })
+            // The following was the old version of manual DB connection, it is not used anymore as NextAuth.JS was implemented:
+            // const response = await fetch("/api/login", {
+            //     method: "POST",
+            //     headers: { "Content-Type": "application/json" },
+            //     body: JSON.stringify({ email, password })
+            // });
+            
+
+            // const data = await response.json();
+
+            const response = await signIn("credentials", {
+                email,
+                password,
+                redirect: false,
             });
 
-            const data = await response.json();
-
-            if (response.ok) {
+            if (response?.ok) {
                 setSubmitStatus("success")
                 // Clear form fields
                 setEmail("")

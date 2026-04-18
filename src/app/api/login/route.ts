@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcrypt";
 
+{/* Old function before implementing NextAuth.JS
+    THE FOLLOWING IS NOT IN USE: */}
 export async function POST(request: Request) {
     const body = await request.json();
 
