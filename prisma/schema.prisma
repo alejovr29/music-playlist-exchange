@@ -13,8 +13,121 @@ datasource db {
 }
 
 model User {
-  id             Int     @id @default(autoincrement())
-  name           String
-  email          String  @unique
-  password       String
+  id        Int       @id @default(autoincrement())
+  name      String?
+  email     String    @unique
+  password  String
+  createdAt DateTime  @default(now())
+
+  // A user can have many playlists
+  playlists Playlist[]
+
+  // A user can vote many songs
+  votes Vote[]
+
+  // A user can choose many genres
+  genres UserGenre[]
+
+  // Social system (followers)
+  following Follow[] @relation("Follower")
+  followers Follow[] @relation("Following")
+}
+
+model Song {
+  id        Int       @id @default(autoincrement())
+  title     String
+  artist    String
+  imageUrl  String?   // Optional thumbnail (album cover, etc.)
+  createdAt DateTime  @default(now())
+
+  // A song can appear in many playlists
+  playlists PlaylistSong[]
+
+  // A song can belong to many genres
+  genres SongGenre[]
+
+  // A song can receive many votes
+  votes Vote[]
+}
+
+model Playlist {
+  id        Int       @id @default(autoincrement())
+  name      String
+  userId    Int
+  createdAt DateTime  @default(now())
+
+  // Owner of the playlist
+  user User @relation(fields: [userId], references: [id])
+
+  // Songs inside the playlist
+  songs PlaylistSong[]
+}
+
+model PlaylistSong {
+  playlistId Int
+  songId     Int
+
+  playlist Playlist @relation(fields: [playlistId], references: [id])
+  song     Song     @relation(fields: [songId], references: [id])
+
+  // Composite primary key (avoids duplicates)
+  @@id([playlistId, songId])
+}
+
+model Genre {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+
+  // Songs that belong to this genre
+  songs SongGenre[]
+
+  // Users that have chosen this genre
+  users UserGenre[]
+}
+
+model SongGenre {
+  songId  Int
+  genreId Int
+
+  song  Song  @relation(fields: [songId], references: [id])
+  genre Genre @relation(fields: [genreId], references: [id])
+
+  @@id([songId, genreId])
+}
+
+model UserGenre {
+  userId  Int
+  genreId Int
+  weight  Int?      // how much user likes it (optional)
+  createdAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id])
+  genre Genre @relation(fields: [genreId], references: [id])
+
+  @@id([userId, genreId])
+}
+
+model Vote {
+  id     Int @id @default(autoincrement())
+  userId Int
+  songId Int
+
+  value  Int // e.g. +1 (like), -1 (dislike) or just 1 if you keep it simple
+
+  user User @relation(fields: [userId], references: [id])
+  song Song @relation(fields: [songId], references: [id])
+
+  // Prevent user from voting same song multiple times
+  @@unique([userId, songId])
+}
+
+model Follow {
+  followerId  Int
+  followingId Int
+
+  follower  User @relation("Follower", fields: [followerId], references: [id])
+  following User @relation("Following", fields: [followingId], references: [id])
+
+  // Composite key: one follow per pair
+  @@id([followerId, followingId])
 }
