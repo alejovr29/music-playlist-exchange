@@ -3,10 +3,9 @@
 import { useState } from "react"
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 
-export default function RegisterPage() {
-    const [name, setName] = useState("")
+
+export default function LoginPage() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [touched, setTouched] = useState({
@@ -22,10 +21,10 @@ export default function RegisterPage() {
         setSubmitStatus("loading")
 
         try {
-            const response = await fetch("/api/register", {
+            const response = await fetch("/api/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name, email, password })
+                body: JSON.stringify({ email, password })
             });
 
             const data = await response.json();
@@ -33,7 +32,6 @@ export default function RegisterPage() {
             if (response.ok) {
                 setSubmitStatus("success")
                 // Clear form fields
-                setName("")
                 setEmail("")
                 setPassword("")
                 setTouched({
@@ -55,35 +53,22 @@ export default function RegisterPage() {
 
     {/* Form validations using regex and lenght checks */ }
 
-    let validEmail = emailRegex.test(email) === true;
-    let validPassword = passwordRegex.test(password) === true;
-
-    let showEmailError = touched.email && !validEmail;
-    let showPasswordError = touched.password && !validPassword;
+    let showEmailError = touched.email && emailRegex.test(email) === false;
+    let showPasswordError = touched.password && password.trim() == "";
 
 
     {/* Checks if everything is valid and enable Submit button */ }
     const isFormValid =
-        name.trim() !== "" &&
-        validEmail &&
-        validPassword;
+        email.trim() !== "" && emailRegex.test(email) &&
+        password.trim() !== "";
 
     return (
         <main className="m-auto max-w-md p-4">
-            <h1 className="text-3xl font-bold underline mb-6">Register</h1>
+            <h1 className="text-3xl font-bold underline mb-6">Welcome Back</h1>
 
             <div className="bg-slate-700 p-6 rounded border-amber-50 border-2">
 
                 <form className='w-full space-y-4' onSubmit={handleSubmit}>
-                    <div>
-                        <label>Name</label>
-                        <input
-                            className='bg-slate-500 w-full border p-2 rounded'
-                            type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                        />
-                    </div>
 
                     <div>
                         <label>Email</label>
@@ -101,7 +86,7 @@ export default function RegisterPage() {
                         />
                         {showEmailError && (
                             <p className=" text-red-500 text-sm mt-1">
-                                Please provide a valid email address.
+                                Please enter a valid email address.
                             </p>
                         )}
                     </div>
@@ -121,16 +106,9 @@ export default function RegisterPage() {
                         />
 
                         {showPasswordError && (
-                            <div className=" text-red-500 text-sm mt-3 ">
-                                <strong>Password must be at least:</strong>
-
-                                <ul>
-                                    <li>- 8 characters long.</li>
-                                    <li>- Include at least one uppercase letter.</li>
-                                    <li>- Include at least one lowercase letter.</li>
-                                    <li>- Include at least one number.</li>
-                                </ul>
-                            </div>
+                            <p className=" text-red-500 text-sm mt-1">
+                                Please enter your password.
+                            </p>
                         )}
                     </div>
 
@@ -139,7 +117,7 @@ export default function RegisterPage() {
                         disabled={submitStatus === "loading" || !isFormValid}
                         className="bg-sky-500 hover:bg-violet-600 text-white font-bold mt-2 py-2 px-4 rounded w-full disabled:opacity-50"
                     >
-                        {submitStatus === "loading" ? "Creating..." : "Create Account"}
+                        {submitStatus === "loading" ? "Loggin in..." : "Login"}
                     </button>
                 </form>
 
@@ -147,7 +125,7 @@ export default function RegisterPage() {
                 {
                     submitStatus === "success" && (
                         <div className="mt-8 mb-4 p-3 bg-green-500 text-black rounded text-center transition-all">
-                            ✅ Account created successfully!
+                            ✅ Logged in successfully!
                         </div>
                     )
                 }
@@ -155,7 +133,7 @@ export default function RegisterPage() {
                 {
                     submitStatus === "error" && (
                         <div className="mt-8 mb-4 p-3 bg-red-500 text-black rounded text-center transition-all">
-                            ❌ Error creating account. Please try again.
+                            ❌ Error finding account. Please try again.
                         </div>
                     )
                 }
@@ -163,7 +141,7 @@ export default function RegisterPage() {
                 {
                     submitStatus === "loading" && (
                         <div className="mt-8 mb-4 p-3 bg-blue-500 text-black rounded text-center transition-all">
-                            ⏳ Creating account...
+                            ⏳ Login account...
                         </div>
                     )
                 }
