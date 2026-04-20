@@ -37,6 +37,7 @@ model Song {
   id        Int       @id @default(autoincrement())
   title     String
   artist    String
+  album     String
   imageUrl  String?   // Optional thumbnail (album cover, etc.)
   createdAt DateTime  @default(now())
 
@@ -55,6 +56,7 @@ model Playlist {
   name      String
   userId    Int
   createdAt DateTime  @default(now())
+  isPublic Boolean @default(false)
 
   // Owner of the playlist
   user User @relation(fields: [userId], references: [id])

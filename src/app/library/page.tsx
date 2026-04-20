@@ -97,15 +97,17 @@ export default function LibraryPage() {
                 <div>
                     <p>No playlists yet. Create your first one 👇</p>
                     <button onClick={() => setShowForm(true)}
-                        className="bg-indigo-600 p-4 rounded w-48 h-48">Create Playlist</button>
+                        className="bg-indigo-600 p-4 rounded w-48 h-48 cursor-pointer">Create Playlist</button>
                 </div>
             ) : (
                 <div className='flex gap-4  items-center flex-wrap'>
-                    <button onClick={() => showForm === false ? setShowForm(true) : setShowForm(false)} className="bg-indigo-500  flex gap-4 mt-4 p-4 rounded w-48 h-48">+ New Playlist</button>
+                    <button onClick={() => showForm === false ? setShowForm(true) : setShowForm(false)} className="bg-indigo-500  flex gap-4 mt-4 p-4 rounded w-48 h-48 cursor-pointer">+ New Playlist</button>
 
                     <div className="flex gap-4 mt-4">
                         {playlists.map((playlist) => (
-                            <div key={playlist.id} className="bg-teal-500 p-4 rounded w-48 h-48">
+                            <div key={playlist.id}
+                                onClick={() => router.push(`/library/${playlist.id}`)}
+                                className="bg-teal-500 p-4 rounded w-48 h-48 cursor-pointer">
                                 {playlist.name}
                             </div>
                         ))}
