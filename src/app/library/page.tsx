@@ -123,6 +123,7 @@ export default function LibraryPage() {
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         className="p-2 rounded text-white bg-slate-500"
+                        required
                     />
 
                     <button type="submit" className="ml-2 bg-blue-500 px-3 py-2 rounded">
