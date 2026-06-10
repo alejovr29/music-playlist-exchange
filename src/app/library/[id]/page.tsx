@@ -41,6 +41,11 @@ export default function PlaylistPage() {
 
                     const data = await response.json();
 
+                    if (response.status === 404) {
+                        router.replace("/not-found");
+                        return;
+                    }
+
                     if (response.ok) {
                         setSubmitStatus("success")
                         setPlaylist(data.playlist)
