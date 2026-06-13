@@ -3,8 +3,8 @@ import Link from "next/link";
 
 export default function NotFound() {
     return (
-        <div className="flex min-h-screen flex-col items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-            <main className="flex w-full max-w-3xl flex-col items-center gap-6 rounded-2xl bg-white px-16 py-32 text-center dark:bg-zinc-100">
+        <div className="flex h-160 flex-col items-center justify-center font-sans">
+            <div className="flex w-full max-w-3xl flex-col items-center gap-6 rounded-2xl px-16 py-28 text-center dark:bg-zinc-300">
                 <Image
                     src="/404-not-found.png"
                     alt="Not Found"
@@ -17,7 +17,7 @@ export default function NotFound() {
                     This page does not exist
                 </h1>
 
-                <p className="text-lg text-gray-600 dark:text-gray-400">
+                <p className="text-lg text-gray-600 dark:text-stone-600">
                     The playlist or page you are looking for was not found.
                 </p>
 
@@ -36,7 +36,7 @@ export default function NotFound() {
                         Go Home
                     </Link>
                 </div>
-            </main>
+            </div>
         </div>
     );
 }
