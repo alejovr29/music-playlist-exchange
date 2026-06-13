@@ -1,12 +1,15 @@
 "use client";
-
+import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FaHome, FaMusic, FaCompass } from "react-icons/fa";
-import { CiSearch, CiLogout, CiCircleQuestion } from "react-icons/ci";
+import { FaHome, FaMusic, FaCompass, FaPlusCircle } from "react-icons/fa";
+import { CiSearch, CiLogout, CiLogin, CiCircleQuestion } from "react-icons/ci";
 
 const Sidebar = () => {
     const pathname = usePathname();
+    const { data: session, status } = useSession();
+
+    const isLogged = status === "authenticated";
 
     const isActive = (path: string) => {
         if (path === "/") {
@@ -67,41 +70,77 @@ const Sidebar = () => {
             </nav>
 
             {/* Profile/Dashboard Section */}
-            <div className="pb-8 border-t border-gray-600">
-                {/* Profile */}
-                <div className="mt-6 mb-3">
-                    <Link href="/dashboard" className={linkClass("/dashboard")}>
-                        <span className="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0">
-                            A
-                        </span>
-                        <span>Profile</span>
-                    </Link>
+            {isLogged ? (
+                <div className="pb-8 border-t border-gray-600">
+                    {/* Profile */}
+                    <div className="mt-6 mb-3">
+                        <Link href="/dashboard" className={linkClass("/dashboard")}>
+                            <span className="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0">
+                                {session?.user?.name ? session.user.name.charAt(0).toUpperCase() : "U"}
+                            </span>
+                            <span>Profile</span>
+                        </Link>
+                    </div>
+
+                    {/* Help and Logout - Same Row */}
+                    <div className="flex gap-3">
+
+                        <button
+                            onClick={() => signOut({ callbackUrl: "/login" })}
+                            className="flex-1.5 flex items-center justify-center gap-2 px-3 py-3 text-red-400 hover:bg-red-900/30 rounded-lg transition-colors text-sm font-semibold"
+                        >
+                            <CiLogout size={20} />
+                            <span>Log Out</span>
+                        </button>
+
+
+                        <div className="border-r  border-gray-600" />
+
+                        <Link
+                            href="/help"
+                            className="flex-1 flex items-center justify-center gap-2 px-3 py-3 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors text-sm font-semibold "
+                        >
+                            <CiCircleQuestion size={20} />
+                            <span>Help</span>
+                        </Link>
+
+                    </div>
                 </div>
+            ) : (
+                <div className="pb-8 border-t border-gray-600">
+                    {/* Profile */}
+                    <div className="mt-6 mb-3">
+                        <Link href="/dashboard" className={linkClass("/dashboard")}>
+                            <CiLogin size={20} />
+                            <span>Log in</span>
+                        </Link>
+                    </div>
 
-                {/* Help and Logout - Same Row */}
-                <div className="flex gap-3">
+                    {/* Help and Logout - Same Row */}
+                    <div className="flex gap-3">
 
-                    <Link
-                        href="/api/auth/logout"
-                        className="flex-1 flex items-center justify-center gap-2 px-3 py-3 text-red-400 hover:bg-red-900/30 rounded-lg transition-colors text-sm font-semibold"
-                    >
-                        <CiLogout size={20} />
-                        <span>Logout</span>
-                    </Link>
+                        <Link
+                            href="/register"
+                            className="flex-1.5 flex items-center justify-center gap-2 px-3 py-3 text-red-400 hover:bg-red-900/30 rounded-lg transition-colors text-sm font-semibold"
+                        >
+                            <FaPlusCircle size={20} />
+                            <span>Sign up</span>
+                        </Link>
 
 
-                    <div className="border-r  border-gray-600" />
+                        <div className="border-r  border-gray-600" />
 
-                    <Link
-                        href="/help"
-                        className="flex-1 flex items-center justify-center gap-2 px-3 py-3 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors text-sm font-semibold "
-                    >
-                        <CiCircleQuestion size={20} />
-                        <span>Help</span>
-                    </Link>
+                        <Link
+                            href="/help"
+                            className="flex-1 flex items-center justify-center gap-2 px-3 py-3 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors text-sm font-semibold "
+                        >
+                            <CiCircleQuestion size={20} />
+                            <span>Help</span>
+                        </Link>
 
+                    </div>
                 </div>
-            </div>
+            )}
         </aside>
     );
 };
