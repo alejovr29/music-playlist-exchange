@@ -89,7 +89,7 @@ export default function LibraryPage() {
 
     return (
         <main className="p-6">
-            <h1 className="text-3xl font-bold mb-4">
+            <h1 className="text-3xl font-bold mb-8">
                 {session?.user?.name}'s Library
             </h1>
 
@@ -101,39 +101,42 @@ export default function LibraryPage() {
                 </div>
             ) : (
                 <div className='flex gap-4  items-center flex-wrap'>
-                    <button onClick={() => showForm === false ? setShowForm(true) : setShowForm(false)} className="bg-indigo-500  flex gap-4 mt-4 p-4 rounded w-48 h-48 cursor-pointer">+ New Playlist</button>
+                    <button onClick={() => showForm === false ? setShowForm(true) : setShowForm(false)} className="bg-indigo-500  flex gap-4 p-4 rounded w-48 h-48 cursor-pointer">+ New Playlist</button>
 
-                    <div className="flex gap-4 mt-4">
-                        {playlists.map((playlist) => (
-                            <div key={playlist.id}
-                                onClick={() => router.push(`/library/${playlist.id}`)}
-                                className="bg-teal-500 p-4 rounded w-48 h-48 cursor-pointer">
-                                {playlist.name}
-                            </div>
-                        ))}
-                    </div>
+
+                    {playlists.map((playlist) => (
+                        <div key={playlist.id}
+                            onClick={() => router.push(`/library/${playlist.id}`)}
+                            className="bg-teal-500 p-4 rounded w-48 h-48 cursor-pointer">
+                            {playlist.name}
+                        </div>
+                    ))}
                 </div>
-            )}
 
-            {showForm && (
-                <form onSubmit={handleCreatePlaylist} className="mt-4">
-                    <input
-                        type="text"
-                        placeholder="Playlist name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        className="p-2 rounded text-white bg-slate-500"
-                        required
-                    />
+            )
+            }
 
-                    <button type="submit" className="ml-2 bg-blue-500 px-3 py-2 rounded">
-                        Save
-                    </button>
-                    <button type="button" onClick={() => setShowForm(false)} className="ml-2 bg-red-500 px-3 py-2 rounded">
-                        Cancel
-                    </button>
-                </form>
-            )}
-        </main>
+            {
+                showForm && (
+                    <form onSubmit={handleCreatePlaylist} className="mt-4">
+                        <input
+                            type="text"
+                            placeholder="Playlist name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            className="p-2 rounded text-white bg-slate-500"
+                            required
+                        />
+
+                        <button type="submit" className="ml-2 bg-blue-500 px-3 py-2 rounded">
+                            Save
+                        </button>
+                        <button type="button" onClick={() => setShowForm(false)} className="ml-2 bg-red-500 px-3 py-2 rounded">
+                            Cancel
+                        </button>
+                    </form>
+                )
+            }
+        </main >
     );
 }

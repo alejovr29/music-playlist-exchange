@@ -94,7 +94,7 @@ export default function PlaylistClient({ playlistId }: { playlistId: number }) {
 
     return (
         <main className="p-6">
-            <h1 className="text-3xl font-bold mb-4">
+            <h1 className="text-3xl font-bold mb-8">
                 {playlist?.name}'s songs
             </h1>
 
@@ -112,27 +112,25 @@ export default function PlaylistClient({ playlistId }: { playlistId: number }) {
                 <div className="flex gap-4 items-center flex-wrap">
                     <button
                         onClick={() => setShowForm(!showForm)}
-                        className="bg-indigo-500 flex gap-4 mt-4 p-4 rounded w-48 h-48"
+                        className="bg-indigo-500 flex gap-4 p-4 rounded w-48 h-48"
                     >
                         + New Song
                     </button>
 
-                    <div className="flex gap-4 mt-4">
-                        {songs.map((song) => (
-                            <div key={song.id} className="bg-teal-500 p-4 rounded w-48 h-48">
-                                {song.title}
-                                <p className="text-sm text-gray-300">{song.artist}</p>
-                                <p className="text-sm text-gray-300">{song.album}</p>
-                                {song.imageUrl && (
-                                    <img
-                                        src={song.imageUrl}
-                                        alt={song.title}
-                                        className="mt-2 w-full h-24 object-cover rounded"
-                                    />
-                                )}
-                            </div>
-                        ))}
-                    </div>
+                    {songs.map((song) => (
+                        <div key={song.id} className="bg-teal-500 p-4 rounded w-48 h-48">
+                            {song.title}
+                            <p className="text-sm text-gray-600">{song.artist}</p>
+                            <p className="text-sm text-gray-600">{song.album}</p>
+                            {song.imageUrl && (
+                                <img
+                                    src={song.imageUrl}
+                                    alt={song.title}
+                                    className="mt-2 w-20 h-20 object-fill rounded"
+                                />
+                            )}
+                        </div>
+                    ))}
                 </div>
             )}
 
@@ -143,7 +141,7 @@ export default function PlaylistClient({ playlistId }: { playlistId: number }) {
                         placeholder="Song title"
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
-                        className="p-2 rounded text-white bg-slate-500"
+                        className="p-2 mr-2 rounded text-white bg-slate-500"
                         required
                     />
                     <input
@@ -151,7 +149,7 @@ export default function PlaylistClient({ playlistId }: { playlistId: number }) {
                         placeholder="Artist"
                         value={artist}
                         onChange={(e) => setArtist(e.target.value)}
-                        className="p-2 rounded text-white bg-slate-500"
+                        className="p-2 mr-2 rounded text-white bg-slate-500"
                         required
                     />
                     <input
@@ -159,14 +157,14 @@ export default function PlaylistClient({ playlistId }: { playlistId: number }) {
                         placeholder="Album"
                         value={album}
                         onChange={(e) => setAlbum(e.target.value)}
-                        className="p-2 rounded text-white bg-slate-500"
+                        className="p-2 mr-2 rounded text-white bg-slate-500"
                     />
                     <input
                         type="url"
                         placeholder="Image URL"
                         value={imageUrl}
                         onChange={(e) => setImageUrl(e.target.value)}
-                        className="p-2 rounded text-white bg-slate-500"
+                        className="p-2 mr-2 rounded text-white bg-slate-500"
                     />
 
                     <button type="submit" className="ml-2 bg-blue-500 px-3 py-2 rounded">

@@ -38,7 +38,7 @@ export default function RootLayout({
             {/* Main Content - 87% */}
             <main className="flex-1 flex flex-col bg-gray-900">
               {/* Page Content with Footer */}
-              <div className="flex-1 overflow-x-auto" style={{ paddingTop: "100px", paddingRight: "30px", paddingBottom: "30px", paddingLeft: "30px" }}>
+              <div className="flex-1 overflow-x-hidden" style={{ paddingTop: "100px", paddingRight: "30px", paddingBottom: "30px", paddingLeft: "30px" }}>
                 <div className="w-full">
                   {children}
                 </div>
