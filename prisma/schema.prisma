@@ -39,6 +39,7 @@ model Song {
   artist    String
   album     String
   imageUrl  String?   // Optional thumbnail (album cover, etc.)
+  externalUrl String?
   createdAt DateTime  @default(now())
 
   // A song can appear in many playlists
