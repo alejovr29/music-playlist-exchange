@@ -131,7 +131,10 @@ export default function LibraryPage() {
                         <button type="submit" className="ml-2 bg-blue-500 px-3 py-2 rounded">
                             Save
                         </button>
-                        <button type="button" onClick={() => setShowForm(false)} className="ml-2 bg-red-500 px-3 py-2 rounded">
+                        <button type="button" onClick={() => {
+                            setShowForm(false);
+                            setName("");
+                        }} className="ml-2 bg-red-500 px-3 py-2 rounded">
                             Cancel
                         </button>
                     </form>

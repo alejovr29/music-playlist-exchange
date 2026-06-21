@@ -143,7 +143,10 @@ export default function PlaylistClient({ playlistId }: { playlistId: number }) {
                     </button>
                     <button
                         type="button"
-                        onClick={() => setShowForm(false)}
+                        onClick={() => {
+                            setShowForm(false);
+                            setExternalUrl("");
+                        }}
                         className="ml-2 bg-red-500 px-3 py-2 rounded"
                     >
                         Cancel
