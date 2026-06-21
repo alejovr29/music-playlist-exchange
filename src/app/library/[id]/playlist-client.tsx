@@ -25,10 +25,7 @@ export default function PlaylistClient({ playlistId }: { playlistId: number }) {
     const [submitStatus, setSubmitStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
     // Song form states
-    const [title, setTitle] = useState("");
-    const [artist, setArtist] = useState("");
-    const [album, setAlbum] = useState("");
-    const [imageUrl, setImageUrl] = useState("");
+    const [externalUrl, setExternalUrl] = useState("");
 
     // Load playlist data (playlist info + songs) when the component mounts
     useEffect(() => {
@@ -62,7 +59,7 @@ export default function PlaylistClient({ playlistId }: { playlistId: number }) {
             const response = await fetch(`/api/playlists/${playlistId}/songs`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ title, artist, album, imageUrl }),
+                body: JSON.stringify({ externalUrl }),
             });
 
             const data = await response.json();
@@ -70,10 +67,7 @@ export default function PlaylistClient({ playlistId }: { playlistId: number }) {
             if (response.ok) {
                 setSubmitStatus("success");
                 setSongs([...songs, data.song]);
-                setTitle("");
-                setArtist("");
-                setAlbum("");
-                setImageUrl("");
+                setExternalUrl("");
                 setShowForm(false);
 
                 setTimeout(() => setSubmitStatus("idle"), 5000);
@@ -137,33 +131,10 @@ export default function PlaylistClient({ playlistId }: { playlistId: number }) {
             {showForm && (
                 <form onSubmit={handleCreateSongInPlaylist} className="mt-4">
                     <input
-                        type="text"
-                        placeholder="Song title"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        className="p-2 mr-2 rounded text-white bg-slate-500"
-                        required
-                    />
-                    <input
-                        type="text"
-                        placeholder="Artist"
-                        value={artist}
-                        onChange={(e) => setArtist(e.target.value)}
-                        className="p-2 mr-2 rounded text-white bg-slate-500"
-                        required
-                    />
-                    <input
-                        type="text"
-                        placeholder="Album"
-                        value={album}
-                        onChange={(e) => setAlbum(e.target.value)}
-                        className="p-2 mr-2 rounded text-white bg-slate-500"
-                    />
-                    <input
                         type="url"
-                        placeholder="Image URL"
-                        value={imageUrl}
-                        onChange={(e) => setImageUrl(e.target.value)}
+                        placeholder="Song URL"
+                        value={externalUrl}
+                        onChange={(e) => setExternalUrl(e.target.value)}
                         className="p-2 mr-2 rounded text-white bg-slate-500"
                     />
 

@@ -2,6 +2,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
+import fetchYouTubeOEmbed from "@/lib/youtube-oembed";
 
 
 
@@ -60,7 +61,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
     const session = await getServerSession();
-    const { title, artist, album, imageUrl } = await request.json();
+    const { externalUrl } = await request.json();
     const { id } = await params;
     const playlistId = Number(id);
 
@@ -97,7 +98,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     }
 
     // Validate required fields
-    if (!title || !artist || !playlistId) {
+    if (!externalUrl || !playlistId) {
         return NextResponse.json(
             { error: "Missing required fields" },
             { status: 400 }
@@ -107,15 +108,27 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     // Convert playlistID provided by URL to a number, since it's received as a string
     const playlistIdNumber = Number(playlistId);
 
+    const urlMetadata = await fetchYouTubeOEmbed(externalUrl);
+
+    if (!urlMetadata) {
+        return NextResponse.json({ error: "Unable to fetch metadata for the provided URL" }, { status: 400 });
+    }
+
     // Obtains song from DB
     let song = await prisma.song.findFirst({
-        where: { title, artist },
+        where: { title: urlMetadata.title, artist: urlMetadata.author_name },
     });
 
     // If song doesn't exist, creates it in the DB
     if (!song) {
         song = await prisma.song.create({
-            data: { title, artist, album, imageUrl },
+            data: {
+                title: urlMetadata.title,
+                artist: urlMetadata.author_name,
+                album: "none",
+                imageUrl: urlMetadata.thumbnail_url,
+                externalUrl: externalUrl
+            },
         });
     }
 
