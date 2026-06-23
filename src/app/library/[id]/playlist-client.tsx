@@ -23,6 +23,7 @@ export default function PlaylistClient({ playlistId }: { playlistId: number }) {
     const [isLoading, setIsLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
     const [submitStatus, setSubmitStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+    const [errorMessage, setErrorMessage] = useState("");
 
     // Song form states
     const [externalUrl, setExternalUrl] = useState("");
@@ -53,6 +54,7 @@ export default function PlaylistClient({ playlistId }: { playlistId: number }) {
 
     const handleCreateSongInPlaylist = async (e: React.FormEvent) => {
         e.preventDefault();
+        setErrorMessage("");
         setSubmitStatus("loading");
 
         try {
@@ -70,6 +72,10 @@ export default function PlaylistClient({ playlistId }: { playlistId: number }) {
                 setExternalUrl("");
                 setShowForm(false);
 
+                setTimeout(() => setSubmitStatus("idle"), 5000);
+            } else if (response.status === 409) {
+                setErrorMessage(data.message);
+                setSubmitStatus("error");
                 setTimeout(() => setSubmitStatus("idle"), 5000);
             } else {
                 setSubmitStatus("error");
@@ -153,6 +159,32 @@ export default function PlaylistClient({ playlistId }: { playlistId: number }) {
                     </button>
                 </form>
             )}
+
+            {/* Confirmation message */}
+            {
+                submitStatus === "success" && (
+                    <div className="mt-8 mb-4 p-3 bg-green-500 text-black rounded text-center transition-all">
+                        ✅ Song added successfully!
+                    </div>
+                )
+            }
+
+            {
+                submitStatus === "error" && (
+                    <div className="mt-8 mb-4 p-3 bg-red-500 text-black rounded text-center transition-all">
+                        {/* If there's a specific error message (like song already in playlist), show it. Otherwise, show a generic error message. */}
+                        {errorMessage ? `❌ Error: ${errorMessage}` : "❌ Error adding song. Please try again."}
+                    </div>
+                )
+            }
+
+            {
+                submitStatus === "loading" && (
+                    <div className="mt-8 mb-4 p-3 bg-blue-500 text-black rounded text-center transition-all">
+                        ⏳ Adding song...
+                    </div>
+                )
+            }
         </main>
     );
 }

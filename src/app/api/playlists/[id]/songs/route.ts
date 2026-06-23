@@ -144,9 +144,9 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
 
     // If the song is already in the playlist, return a message indicating that
     if (existing) {
-        return NextResponse.json({
-            message: "Song already in playlist",
-        });
+        return NextResponse.json(
+            { message: "Song already in playlist" }, { status: 409 }
+        );
     }
 
     // If the song is not in the playlist, create the association in the database
