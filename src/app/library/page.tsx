@@ -128,13 +128,13 @@ export default function LibraryPage() {
                             required
                         />
 
-                        <button type="submit" className="ml-2 bg-blue-500 px-3 py-2 rounded">
+                        <button type="submit" className="ml-2 bg-blue-500 px-3 py-2 rounded cursor-pointer">
                             Save
                         </button>
                         <button type="button" onClick={() => {
                             setShowForm(false);
                             setName("");
-                        }} className="ml-2 bg-red-500 px-3 py-2 rounded">
+                        }} className="ml-2 bg-red-500 px-3 py-2 rounded cursor-pointer">
                             Cancel
                         </button>
                     </form>

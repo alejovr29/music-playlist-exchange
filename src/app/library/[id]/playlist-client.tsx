@@ -112,7 +112,7 @@ export default function PlaylistClient({ playlistId }: { playlistId: number }) {
                 <div className="flex gap-4 items-center flex-wrap">
                     <button
                         onClick={() => setShowForm(!showForm)}
-                        className="bg-indigo-500 flex gap-4 p-4 rounded w-48 h-48"
+                        className="bg-indigo-500 flex gap-4 p-4 rounded w-48 h-48 cursor-pointer"
                     >
                         + New Song
                     </button>
@@ -144,7 +144,7 @@ export default function PlaylistClient({ playlistId }: { playlistId: number }) {
                         className="p-2 mr-2 rounded text-white bg-slate-500"
                     />
 
-                    <button type="submit" className="ml-2 bg-blue-500 px-3 py-2 rounded">
+                    <button type="submit" className="ml-2 bg-blue-500 px-3 py-2 rounded cursor-pointer">
                         Save
                     </button>
                     <button
@@ -153,7 +153,7 @@ export default function PlaylistClient({ playlistId }: { playlistId: number }) {
                             setShowForm(false);
                             setExternalUrl("");
                         }}
-                        className="ml-2 bg-red-500 px-3 py-2 rounded"
+                        className="ml-2 bg-red-500 px-3 py-2 rounded cursor-pointer"
                     >
                         Cancel
                     </button>

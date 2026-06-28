@@ -87,7 +87,7 @@ const Sidebar = () => {
 
                         <button
                             onClick={() => signOut({ callbackUrl: "/login" })}
-                            className="flex-1.5 flex items-center justify-center gap-2 px-3 py-3 text-red-400 hover:bg-red-900/30 rounded-lg transition-colors text-sm font-semibold"
+                            className="flex-1.5 flex items-center justify-center gap-2 px-3 py-3 text-red-400 hover:bg-red-900/30 rounded-lg transition-colors text-sm font-semibold cursor-pointer"
                         >
                             <CiLogout size={20} />
                             <span>Log Out</span>

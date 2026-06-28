@@ -31,7 +31,7 @@ export default function LoginPage() {
             //     headers: { "Content-Type": "application/json" },
             //     body: JSON.stringify({ email, password })
             // });
-            
+
 
             // const data = await response.json();
 
@@ -133,7 +133,7 @@ export default function LoginPage() {
                     <button
                         type="submit"
                         disabled={submitStatus === "loading" || !isFormValid}
-                        className="bg-sky-500 hover:bg-violet-600 text-white font-bold mt-2 py-2 px-4 rounded w-full disabled:opacity-50"
+                        className="bg-sky-500 hover:bg-violet-600 text-white font-bold mt-2 py-2 px-4 rounded w-full disabled:opacity-50 cursor-pointer"
                     >
                         {submitStatus === "loading" ? "Loggin in..." : "Login"}
                     </button>
