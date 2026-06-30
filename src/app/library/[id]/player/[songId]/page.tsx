@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { getServerSession } from "next-auth";
 import prisma from "@/lib/prisma";
 import PlayerClient from "./player-client";
+import type { Playlist, Song } from "@/types/music";
 
 export default async function PlayerPage({ params }: { params: Promise<{ id: string; songId: string; }> }) {
     const { id, songId } = await params;

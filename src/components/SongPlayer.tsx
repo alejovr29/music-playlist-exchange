@@ -1,27 +1,41 @@
-const SongPlayer = ({ song }: { song: { externalUrl: string; title: string } }) => {
-    const songUrl = song.externalUrl ?? ""; // If externalUrl does not exist it returns an empty string.
-    const songTitle = song.title;
+import type { Song } from "@/types/music";
+
+const SongPlayer = ({ song }: { song: Song }) => {
+    const songUrl = song.externalUrl;
+    const songTitle = song.title ?? "Song Player";
 
     const regexId = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)?\?vi?=|&vi?=))([^#&?]*).*/;
     const isYouTube = songUrl.match(regexId);
 
-    // To include later on regex for other platforms like Spotify, SoundCloud, etc. For now, I will only handle YouTube links.
-
+    // Only YouTube handling is implemented for now. This can be extended to Spotify or other platforms.
     const handlerPlatform = (url: string) => {
         if (isYouTube) {
             const videoId = isYouTube[1];
-            return `https://www.youtube.com/embed/${videoId}?`;
+            return `https://www.youtube.com/embed/${videoId}`;
         }
-        // If the song is not from YouTube, return the original URL
         return url;
     };
 
     return (
-        <div>
-            {/* Aaquí iría el iframe de la canción que se le pase como prop, el iframe es la propiedad "html" obtenida de cuando se llamó a sus metadatos o si no se usaría la estructura base de iframe de YouTube y simplemente se le cambia el ID del video por la url de esta canción */}
-            <h1>Song Player</h1>
+        <div className="flex flex-col gap-6">
+            <div className="rounded-3xl bg-slate-950 p-4 shadow-lg">
+                <h2 className="text-2xl font-semibold">{song.title}</h2>
+                <p className="text-sm text-slate-400">{song.artist}</p>
+                {song.album && <p className="text-sm text-slate-400">Album: {song.album}</p>}
+            </div>
 
-            <iframe width="560" height="315" src={handlerPlatform(songUrl)} title={songTitle} allow="accelerometer; clipboard-write; autoplay; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
+            <div className="aspect-video overflow-hidden rounded-3xl bg-black">
+                <iframe
+                    width="100%"
+                    height="100%"
+                    src={handlerPlatform(songUrl)}
+                    title={songTitle}
+                    allow="accelerometer; clipboard-write; autoplay; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerPolicy="strict-origin-when-cross-origin"
+                    allowFullScreen
+                    className="h-full w-full"
+                />
+            </div>
         </div>
     );
 }

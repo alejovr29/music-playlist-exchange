@@ -1,37 +1,38 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import SongPlayer from "@/components/SongPlayer";
 import SongsSidebar from "@/components/SongsSidebar";
+import type { Playlist, Song } from "@/types/music";
 
-
-export default function PlayerClient({ playlist, song, songs }: { playlist: any; song: any; songs: []; }) {
-
+export default function PlayerClient({ playlist, song, songs }: { playlist: Playlist; song: Song; songs: Song[]; }) {
     const router = useRouter();
-    const [currentSong, setCurrentSong] = useState(song);
-    const [songList, setSongList] = useState(songs);
-    const [playlistData, setPlaylistData] = useState(playlist);
+    const [currentSong, setCurrentSong] = useState<Song>(song);
 
-    // Esta es la página que dibujará todo el reproductor de canciones, y se encargará de manejar la lógica de reproducción de canciones, como cambiar de canción, reproducir/pausar, etc.
-
-    // Fetch the song data from the database using Prisma
-    // Use useState to store the current song data
-    // Use useEffect to fetch the song data when the component mounts
-
-    // 
-
+    // Playlist and song list are props only and do not need local state setters.
+    // Only the currently active song is managed as local state.
     const handleChangeSong = (songId: number) => {
-        const selectedSong = songId;
-        setCurrentSong(selectedSong);
-        router.push(`/library/${playlistData.id}/player/${selectedSong}`);
-    }
+        const selectedSong = songs.find((item) => item.id === songId);
+        if (!selectedSong) return;
 
-    return (<div>
-        Player Client
-        <div className="grid grid-flow-col grid-rows-1 w-1 h-1">
-            <div className="sticky">{SongPlayer({ song: currentSong })}</div>
-            <div className="overflow-y">{SongsSidebar({ songs: songList, onSongSelect: handleChangeSong })}</div>
+        setCurrentSong(selectedSong);
+        router.push(`/library/${playlist.id}/player/${songId}`);
+    };
+
+    return (
+        <div className="min-h-screen bg-slate-950 text-white">
+            <div className="mx-auto max-w-[1600px] px-4 py-6">
+                <div className="grid gap-6 lg:grid-cols-[3fr_1fr]">
+                    <div className="sticky top-6 self-start rounded-3xl bg-slate-900 p-6 shadow-xl">
+                        <SongPlayer song={currentSong} />
+                    </div>
+
+                    <div className="rounded-3xl bg-slate-900 p-4 shadow-xl">
+                        <SongsSidebar songs={songs} onSongSelect={handleChangeSong} />
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>)
+    );
 }
