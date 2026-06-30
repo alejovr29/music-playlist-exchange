@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import SongPlayer from "@/components/SongPlayer";
-import prisma from "@/lib/prisma";
+import SongsSidebar from "@/components/SongsSidebar";
 
 
-export default function PlayerClient({ playlist, song, songs }: { playlist: any; song: any; songs: any[]; }) {
+export default function PlayerClient({ playlist, song, songs }: { playlist: any; song: any; songs: []; }) {
 
     const router = useRouter();
     const [currentSong, setCurrentSong] = useState(song);
@@ -21,8 +21,17 @@ export default function PlayerClient({ playlist, song, songs }: { playlist: any;
 
     // 
 
+    const handleChangeSong = (songId: number) => {
+        const selectedSong = songId;
+        setCurrentSong(selectedSong);
+        router.push(`/library/${playlistData.id}/player/${selectedSong}`);
+    }
+
     return (<div>
         Player Client
-        {SongPlayer({ song: currentSong })}
+        <div className="grid grid-flow-col grid-rows-1 w-1 h-1">
+            <div className="sticky">{SongPlayer({ song: currentSong })}</div>
+            <div className="overflow-y">{SongsSidebar({ songs: songList, onSongSelect: handleChangeSong })}</div>
+        </div>
     </div>)
 }

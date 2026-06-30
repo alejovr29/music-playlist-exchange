@@ -118,7 +118,7 @@ export default function PlaylistClient({ playlistId }: { playlistId: number }) {
                     </button>
 
                     {songs.map((song) => (
-                        <div key={song.id} className="bg-teal-500 p-4 rounded w-48 h-48">
+                        <div key={song.id} className="bg-teal-500 p-4 rounded w-48 h-48 cursor-pointer" onClick={() => router.push(`/library/${playlistId}/player/${song.id}`)}>
                             {song.title}
                             <p className="text-sm text-gray-600">{song.artist}</p>
                             <p className="text-sm text-gray-600">{song.album}</p>
