@@ -2,19 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-
-interface Song {
-    id: number;
-    title: string;
-    artist: string;
-    album: string;
-    imageUrl?: string;
-}
-
-interface Playlist {
-    id: number;
-    name: string;
-}
+import type { Playlist, Song } from "@/types/music";
 
 export default function PlaylistClient({ playlistId }: { playlistId: number }) {
     const router = useRouter();

@@ -20,8 +20,7 @@ const SongPlayer = ({ song }: { song: Song }) => {
         <div className="flex flex-col gap-6">
             <div className="rounded-3xl bg-slate-950 p-4 shadow-lg">
                 <h2 className="text-2xl font-semibold">{song.title}</h2>
-                <p className="text-sm text-slate-400">{song.artist}</p>
-                {song.album && <p className="text-sm text-slate-400">Album: {song.album}</p>}
+                <p className="text-sm pt-1 text-slate-400">{song.artist}</p>
             </div>
 
             <div className="aspect-video overflow-hidden rounded-3xl bg-black">

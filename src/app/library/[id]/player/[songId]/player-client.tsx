@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import SongPlayer from "@/components/SongPlayer";
 import SongsSidebar from "@/components/SongsSidebar";
+import Rating from "@/components/Rating"
 import type { Playlist, Song } from "@/types/music";
 
 export default function PlayerClient({ playlist, song, songs }: { playlist: Playlist; song: Song; songs: Song[]; }) {
@@ -21,11 +22,12 @@ export default function PlayerClient({ playlist, song, songs }: { playlist: Play
     };
 
     return (
-        <div className="min-h-screen bg-slate-950 text-white">
+        <div className="min-h-screen text-white">
             <div className="mx-auto max-w-[1600px] px-4 py-6">
                 <div className="grid gap-6 lg:grid-cols-[3fr_1fr]">
                     <div className="sticky top-6 self-start rounded-3xl bg-slate-900 p-6 shadow-xl">
                         <SongPlayer song={currentSong} />
+                        <Rating playlist={playlist} song={currentSong} />
                     </div>
 
                     <div className="rounded-3xl bg-slate-900 p-4 shadow-xl">
