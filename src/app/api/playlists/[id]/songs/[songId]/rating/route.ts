@@ -56,6 +56,10 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
         return NextResponse.json({ error: "Missing song" }, { status: 400 });
     }
 
+    if (!songVoted) {
+        return NextResponse.json({ error: "No Ranking found for this song" }, { status: 404 });
+    }
+
     // If the playlist is not public and doesn't belong to the user, return forbidden. This is a security measure in case someone tries to add songs to a playlist that is not theirs by changing the URL
     if (!playlist.isPublic && playlist.userId !== user.id) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });

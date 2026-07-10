@@ -13,7 +13,7 @@ const SongsSidebar = ({ songs, onSongSelect }: { songs: Song[]; onSongSelect: (s
                         key={song.id}
                         type="button"
                         onClick={() => onSongSelect(song.id)}
-                        className="flex w-full gap-4 overflow-hidden rounded-3xl bg-slate-900 p-3 text-left transition hover:bg-slate-800"
+                        className="flex w-full gap-4 overflow-hidden rounded-3xl bg-slate-900 p-3 text-left transition hover:bg-slate-800 cursor-pointer"
                     >
                         {song.imageUrl ? (
                             <img

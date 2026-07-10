@@ -10,7 +10,10 @@ const Rating = ({ playlist, song }: { playlist: Playlist; song: Song }) => {
     const songId = song.id;
 
     const [songRating, setSongRating] = useState(0);
+    const [hoverRating, setHoverRating] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
+
+    const displayRating = hoverRating || songRating;
 
     // Search and load rating for current song if existing.
     useEffect(() => {
@@ -37,9 +40,11 @@ const Rating = ({ playlist, song }: { playlist: Playlist; song: Song }) => {
         fetchSongRatingData();
     }, [song, router]);
 
-    const handleRateSong = async (e: React.FormEvent) => {
+    const handleMouseEnter = (value: number) => setHoverRating(value);
+    const handleMouseLeave = () => setHoverRating(0);
+
+    const handleRateSong = async (value: number) => {
         // Acá debo ver cómo asegurarme de que el valor de songRating es el deseado al momento de iniciar esta función de PUT.
-        e.preventDefault();
 
         try {
             const response = await fetch(`/api/playlists/${playlistId}/songs/${songId}/rating`, {
@@ -62,22 +67,18 @@ const Rating = ({ playlist, song }: { playlist: Playlist; song: Song }) => {
     return (
         <div>
             <div style={{ display: 'flex', color: '#ffc107' }}>
-                {[...Array(5)].map((_, index) => {
-                    const starValue = index + 1;
-
-                    // Estrellas llenas
-                    if (songRating >= starValue) {
-                        return <FaStar key={index} />;
-                    }
-                    // Estrellas a la mitad (ej. rating = 3.5)
-                    else if (songRating >= starValue - 0.5) {
-                        return <FaStarHalfAlt key={index} />;
-                    }
-                    // Estrellas vacías
-                    else {
-                        return <FaRegStar key={index} />;
-                    }
-                })}
+                {[1, 2, 3, 4, 5].map((value) => (
+                    <button
+                        key={value}
+                        type="button"
+                        className="cursor-pointer"
+                        onMouseEnter={() => handleMouseEnter(value)}
+                        onMouseLeave={handleMouseLeave}
+                        onClick={() => handleRateSong(value)}
+                    >
+                        {displayRating >= value ? <FaStar /> : <FaRegStar />}
+                    </button>
+                ))}
             </div>
 
             {songRating && (
