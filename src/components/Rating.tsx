@@ -1,7 +1,7 @@
 import type { Playlist, Song } from "@/types/music";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
+import { FaStar, FaRegStar } from "react-icons/fa";
 
 const Rating = ({ playlist, song }: { playlist: Playlist; song: Song }) => {
 
@@ -11,7 +11,6 @@ const Rating = ({ playlist, song }: { playlist: Playlist; song: Song }) => {
 
     const [songRating, setSongRating] = useState(0);
     const [hoverRating, setHoverRating] = useState(0);
-    const [isLoading, setIsLoading] = useState(true);
 
     const displayRating = hoverRating || songRating;
 
@@ -24,17 +23,12 @@ const Rating = ({ playlist, song }: { playlist: Playlist; song: Song }) => {
 
                 if (response.ok) {
                     setSongRating(data?.vote?.value)
-                    console.log('El valor del fetching del song es:', data.vote.value)
-                    console.log('El valor del songRating es:', songRating)
                 } else {
-                    console.log('No se encontró ningún registro')
+                    console.log('No rating found for this song.')
                 }
             }
             catch (error) {
-                console.log(`Ocurrió un error al hacer fetching del rating de la canción: ${error}`)
-            }
-            finally {
-                setIsLoading(false);
+                console.log(`An error ocurred while attempting to apply the song rating: ${error}`)
             }
         }
         fetchSongRatingData();
@@ -44,34 +38,35 @@ const Rating = ({ playlist, song }: { playlist: Playlist; song: Song }) => {
     const handleMouseLeave = () => setHoverRating(0);
 
     const handleRateSong = async (value: number) => {
-        // Acá debo ver cómo asegurarme de que el valor de songRating es el deseado al momento de iniciar esta función de PUT.
+
+        setSongRating(value);
 
         try {
             const response = await fetch(`/api/playlists/${playlistId}/songs/${songId}/rating`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ songRating }),
+                body: JSON.stringify({ value }),
             });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                console.log(`Rating of ${data.songVote} successfully applied to song ${data.song.title}`)
+            }
         } catch (error) {
-            console.log(`Ocurrió un error al intentar aplicar el rating de la canción: ${error}`)
+            console.log(`An error ocurred while attempting to apply the song rating: ${error}`)
         }
     }
 
-    // Debo crear la función que se encargue de mostrar las estrellas del rating de acuerdo al valor existente de 1 a 5 si se recibió bien luego del GET, si no, mostrar las estrellas en vacío.
-
-    // Hay que usar la canción actual y el usuario para poder asociar el valor en la BD.
-    // Pero primero toca verificar si dicha canción ya ha sido calificada previamente por el usuario, así que asumo que toca hacer una llamada GET para obtener estos valores y en caso de que no existan mostrar la estructura base de las 5 estrellas para ser calificada la canción.
-    // Una vez se califique la canción se hace la llamada POST para guardar estos valores en la DB.
-    // Esto se debe hacer por cada canción, así que cuando se cambie de canción el useEffect debe asegurar dicha recuperación de los datos, pero quizá se pueda precargar las votaciones de todas las canciones en la carga inicial de la página para que sea más veloz la experiencia? o quizá sea mejor hacer la llamada por cada canción?...
-
     return (
-        <div>
-            <div style={{ display: 'flex', color: '#ffc107' }}>
+        <>
+            <div className="flex mt-2 text-amber-300">
+                <p className="text-sm text-slate-400">Rate this song:</p>&nbsp;
                 {[1, 2, 3, 4, 5].map((value) => (
                     <button
                         key={value}
                         type="button"
-                        className="cursor-pointer"
+                        className="cursor-pointer px-0.5"
                         onMouseEnter={() => handleMouseEnter(value)}
                         onMouseLeave={handleMouseLeave}
                         onClick={() => handleRateSong(value)}
@@ -80,13 +75,7 @@ const Rating = ({ playlist, song }: { playlist: Playlist; song: Song }) => {
                     </button>
                 ))}
             </div>
-
-            {songRating && (
-                <div className="" >
-                    Hola
-                </div>
-            )}
-        </div>
+        </>
     )
 }
 

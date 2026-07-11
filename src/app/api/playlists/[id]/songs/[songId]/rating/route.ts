@@ -38,7 +38,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
                 songId: SongIdNumber
             }
         },
-    }); // Por qué falla??
+    });
 
     if (!playlist) {
         return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -60,12 +60,78 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
         return NextResponse.json({ error: "No Ranking found for this song" }, { status: 404 });
     }
 
-    // If the playlist is not public and doesn't belong to the user, return forbidden. This is a security measure in case someone tries to add songs to a playlist that is not theirs by changing the URL
+    // If the playlist is not public and doesn't belong to the user, return forbidden. This is a security measure in case someone tries to see songs to a playlist that is not theirs by changing the URL
     if (!playlist.isPublic && playlist.userId !== user.id) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    console.log('Valor de la votación es: ', songVoted)
-
     return NextResponse.json({ vote: songVoted });
+}
+
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string; songId: string }> }) {
+    const session = await getServerSession();
+    const body = await request.json();
+    const { id, songId } = await params;
+    const playlistId = Number(id)
+    const SongIdNumber = Number(songId)
+
+    if (!session?.user?.email) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (isNaN(playlistId)) {
+        return NextResponse.json({ error: "Invalid playlist id" }, { status: 400 });
+    }
+
+    // Import user and playlist from the database to perform security checks
+    const user = await prisma.user.findUnique({
+        where: { email: session.user.email },
+    });
+
+    const playlist = await prisma.playlist.findUnique({
+        where: { id: playlistId },
+    });
+
+    const song = await prisma.song.findUnique({
+        where: { id: SongIdNumber },
+    });
+
+    if (!user || !playlist || !song) {
+        return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+
+    // If the playlist is not public and doesn't belong to the user, return forbidden. This is a security measure in case someone tries to see songs to a playlist that is not theirs by changing the URL
+    if (!playlist.isPublic && playlist.userId !== user.id) {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    // songVote receives the value sent in the JSON only if it is a number type.
+    const songVote =
+        typeof body?.value === "number"
+            ? body.value
+            : null;
+
+    await prisma.vote.upsert({
+        where: {
+            userId_songId: {
+                userId: user?.id,
+                songId: SongIdNumber
+            }
+        },
+        update: {
+            userId: user?.id,
+            songId: SongIdNumber,
+            value: songVote,
+        },
+        create: {
+            userId: user?.id,
+            songId: SongIdNumber,
+            value: songVote,
+        }
+    });
+
+    return NextResponse.json({
+        message: `Song rating applied to song: "${song.title}" has now this rating: ${songVote}`, song, songVote
+    });
+
 }
