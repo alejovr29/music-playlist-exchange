@@ -7,6 +7,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Platform {
+  YOUTUBE
+  SPOTIFY
+}
+
 model User {
   id        Int       @id @default(autoincrement())
   name      String?
@@ -35,6 +40,7 @@ model Song {
   album       String?
   imageUrl    String?
   externalUrl String
+  platform    Platform  @default(YOUTUBE)
   createdAt   DateTime  @default(now())
 
   // A song can appear in many playlists
@@ -51,6 +57,7 @@ model Playlist {
   id        Int       @id @default(autoincrement())
   name      String
   userId    Int
+  platform  Platform  @default(YOUTUBE)
   createdAt DateTime  @default(now())
   isPublic  Boolean   @default(false)
 
