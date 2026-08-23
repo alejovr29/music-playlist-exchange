@@ -31,15 +31,6 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
         where: { id: SongIdNumber },
     });
 
-    const songVoted = await prisma.vote.findUnique({
-        where: {
-            userId_songId: {
-                userId: user?.id,
-                songId: SongIdNumber
-            }
-        },
-    });
-
     if (!playlist) {
         return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
@@ -47,6 +38,15 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     if (!user) {
         return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
+
+    const songVoted = await prisma.vote.findUnique({
+        where: {
+            userId_songId: {
+                userId: user.id,
+                songId: SongIdNumber,
+            },
+        },
+    });
 
     if (!playlistId) {
         return NextResponse.json({ error: "Missing playlist" }, { status: 400 });
@@ -114,20 +114,18 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     await prisma.vote.upsert({
         where: {
             userId_songId: {
-                userId: user?.id,
-                songId: SongIdNumber
-            }
+                userId: user.id,
+                songId: SongIdNumber,
+            },
         },
         update: {
-            userId: user?.id,
-            songId: SongIdNumber,
             value: songVote,
         },
         create: {
-            userId: user?.id,
+            userId: user.id,
             songId: SongIdNumber,
             value: songVote,
-        }
+        },
     });
 
     return NextResponse.json({

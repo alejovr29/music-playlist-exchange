@@ -29,11 +29,11 @@ const SongPlayer = ({ song, songs, onSongChange }: SongPlayerProps) => {
 
   const { containerRef, ready, state, controls } = useYouTubePlayer(youTubeVideoId ?? "");
 
-  // useEffect(() => {
-  //   if (platform === "YOUTUBE" && youTubeVideoId && ready) {
-  //     controls.loadVideoById(youTubeVideoId);
-  //   }
-  // }, [platform, youTubeVideoId, ready, controls]);
+  useEffect(() => {
+    if (platform === "YOUTUBE" && youTubeVideoId && ready) {
+      controls.loadVideoById(youTubeVideoId);
+    }
+  }, [platform, youTubeVideoId, ready, controls]);
 
   const songIndex = useMemo(() => songs.findIndex((item) => item.id === song.id), [songs, song.id]);
 

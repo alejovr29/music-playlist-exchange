@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import fetchYouTubeOEmbed from "@/lib/youtube-oembed";
+import fetchSpotifyOEmbed from "@/lib/spotify-oembed";
+import { getPlatformFromUrl } from "@/lib/media-platforms";
 
 
 
@@ -108,7 +110,20 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     // Convert playlistID provided by URL to a number, since it's received as a string
     const playlistIdNumber = Number(playlistId);
 
-    const urlMetadata = await fetchYouTubeOEmbed(externalUrl);
+    const platform = getPlatformFromUrl(externalUrl);
+
+    if (!platform) {
+        return NextResponse.json({ error: "Unsupported provider or invalid URL." }, { status: 400 });
+    }
+
+    if (playlist.platform !== platform) {
+        return NextResponse.json({ error: `Playlist accepts ${playlist.platform} songs only.` }, { status: 400 });
+    }
+
+    const urlMetadata =
+        platform === "YOUTUBE"
+            ? await fetchYouTubeOEmbed(externalUrl)
+            : await fetchSpotifyOEmbed(externalUrl);
 
     if (!urlMetadata) {
         return NextResponse.json({ error: "Unable to fetch metadata for the provided URL" }, { status: 400 });
@@ -116,18 +131,19 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
 
     // Obtains song from DB
     let song = await prisma.song.findFirst({
-        where: { title: urlMetadata.title, artist: urlMetadata.author_name },
+        where: { title: urlMetadata?.title ?? "Unknown title", artist: urlMetadata?.author_name ?? "Unknown artist" },
     });
 
     // If song doesn't exist, creates it in the DB
     if (!song) {
         song = await prisma.song.create({
             data: {
-                title: urlMetadata.title,
-                artist: urlMetadata.author_name,
+                title: urlMetadata?.title ?? "Unknown title",
+                artist: urlMetadata?.author_name ?? "Unknown artist",
                 album: "none",
-                imageUrl: urlMetadata.thumbnail_url,
-                externalUrl: externalUrl
+                imageUrl: urlMetadata?.thumbnail_url ?? null,
+                externalUrl: externalUrl,
+                platform,
             },
         });
     }

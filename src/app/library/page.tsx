@@ -3,6 +3,7 @@
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import type { Platform } from "@/types/music";
 
 
 export default function LibraryPage() {
@@ -17,6 +18,7 @@ export default function LibraryPage() {
 
     const [playlists, setPlaylists] = useState<any[]>([])
     const [name, setName] = useState("")
+    const [platform, setPlatform] = useState<Platform>("YOUTUBE");
     const [showForm, setShowForm] = useState(false);
 
     const [submitStatus, setSubmitStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
@@ -60,7 +62,7 @@ export default function LibraryPage() {
             const response = await fetch("/api/playlists", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name })
+                body: JSON.stringify({ name, platform })
             });
 
             const data = await response.json();
@@ -118,25 +120,36 @@ export default function LibraryPage() {
 
             {
                 showForm && (
-                    <form onSubmit={handleCreatePlaylist} className="mt-4">
-                        <input
-                            type="text"
-                            placeholder="Playlist name"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            className="p-2 rounded text-white bg-slate-500"
-                            required
-                        />
-
-                        <button type="submit" className="ml-2 bg-blue-500 px-3 py-2 rounded cursor-pointer">
-                            Save
-                        </button>
-                        <button type="button" onClick={() => {
-                            setShowForm(false);
-                            setName("");
-                        }} className="ml-2 bg-red-500 px-3 py-2 rounded cursor-pointer">
-                            Cancel
-                        </button>
+                    <form onSubmit={handleCreatePlaylist} className="mt-4 space-y-4">
+                        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                            <input
+                                type="text"
+                                placeholder="Playlist name"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                className="p-2 rounded text-white bg-slate-500 flex-1"
+                                required
+                            />
+                            <select
+                                value={platform}
+                                onChange={(e) => setPlatform(e.target.value as Platform)}
+                                className="p-2 rounded text-white bg-slate-500"
+                            >
+                                <option value="YOUTUBE">YouTube</option>
+                                <option value="SPOTIFY">Spotify</option>
+                            </select>
+                        </div>
+                        <div className="flex gap-2">
+                            <button type="submit" className="bg-blue-500 px-3 py-2 rounded cursor-pointer">
+                                Save
+                            </button>
+                            <button type="button" onClick={() => {
+                                setShowForm(false);
+                                setName("");
+                            }} className="bg-red-500 px-3 py-2 rounded cursor-pointer">
+                                Cancel
+                            </button>
+                        </div>
                     </form>
                 )
             }

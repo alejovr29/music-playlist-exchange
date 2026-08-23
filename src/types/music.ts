@@ -1,3 +1,5 @@
+export type Platform = "YOUTUBE" | "SPOTIFY";
+
 export interface Song {
   id: number;
   title: string;
@@ -5,9 +7,11 @@ export interface Song {
   album?: string | null;
   imageUrl?: string | null;
   externalUrl: string;
+  platform: Platform;
 }
 
 export interface Playlist {
   id: number;
   name: string;
+  platform: Platform;
 }

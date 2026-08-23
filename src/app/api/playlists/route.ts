@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
+import type { Platform } from "@/types/music";
+
+const isValidPlatform = (platform: unknown): platform is Platform =>
+    platform === "YOUTUBE" || platform === "SPOTIFY";
 
 export async function GET(request: Request) {
     const session = await getServerSession();
@@ -31,13 +35,19 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
+    const { name, platform } = body;
 
-    const { name } = body;
+    if (!name || typeof name !== "string") {
+        return NextResponse.json({ error: "Playlist name is required." }, { status: 400 });
+    }
+
+    if (!isValidPlatform(platform)) {
+        return NextResponse.json({ error: "Invalid platform." }, { status: 400 });
+    }
 
     const user = await prisma.user.findUnique({
         where: { email: session.user.email },
     });
-
 
     try {
         if (!user) {
@@ -47,8 +57,9 @@ export async function POST(request: Request) {
         const playlist = await prisma.playlist.create({
             data: {
                 name,
-                userId: user?.id,
-            }
+                userId: user.id,
+                platform,
+            },
         });
 
         return NextResponse.json({
