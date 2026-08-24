@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { memo, useState } from "react";
 import type { Playlist, Song } from "@/types/music";
 
 type SongsSidebarProps = {
@@ -101,4 +101,14 @@ const SongsSidebar = ({ songs, playlist, currentSong, onSongSelect }: SongsSideb
     );
 }
 
-export default SongsSidebar;
+// Playback time changes elsewhere should not rerender this sidebar. Compare the
+// playlist fields it displays instead of relying only on object identity.
+export default memo(SongsSidebar, (previous, next) => (
+    previous.songs === next.songs &&
+    previous.playlist.id === next.playlist.id &&
+    previous.playlist.name === next.playlist.name &&
+    previous.playlist.userId === next.playlist.userId &&
+    previous.playlist.isPublic === next.playlist.isPublic &&
+    previous.currentSong === next.currentSong &&
+    previous.onSongSelect === next.onSongSelect
+));

@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useYouTubePlayer } from "@/lib/use-youtube-player";
 import { getPlatformFromUrl, getSpotifyEmbedUrl, getYouTubeEmbedUrl, getYouTubeVideoId } from "@/lib/media-platforms";
-import PlayerControls from "@/components/PlayerControls";
+import PlayerControls, { PlayerProgress } from "@/components/PlayerControls";
 import type { Song } from "@/types/music";
 
 interface SongPlayerProps {
@@ -37,17 +37,17 @@ const SongPlayer = ({ song, songs, onSongChange }: SongPlayerProps) => {
 
   const songIndex = useMemo(() => songs.findIndex((item) => item.id === song.id), [songs, song.id]);
 
-  const handlePrev = () => {
+  const handlePrev = useCallback(() => {
     if (songIndex > 0) {
       onSongChange(songs[songIndex - 1].id);
     }
-  };
+  }, [onSongChange, songIndex, songs]);
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     if (songIndex < songs.length - 1) {
       onSongChange(songs[songIndex + 1].id);
     }
-  };
+  }, [onSongChange, songIndex, songs]);
 
   const embedUrl = platform === "YOUTUBE" ? youTubeEmbedUrl : spotifyEmbedUrl;
 
@@ -81,8 +81,6 @@ const SongPlayer = ({ song, songs, onSongChange }: SongPlayerProps) => {
       <PlayerControls
         isReady={ready}
         isPlaying={state.isPlaying}
-        currentTime={state.currentTime}
-        duration={state.duration}
         volume={state.volume}
         muted={state.muted}
         platform={platform}
@@ -92,9 +90,14 @@ const SongPlayer = ({ song, songs, onSongChange }: SongPlayerProps) => {
         onMute={controls.mute}
         onUnmute={controls.unMute}
         onVolumeChange={controls.setVolume}
-        onSeek={controls.seekTo}
         onPrev={handlePrev}
         onNext={handleNext}
+        disabled={!embedUrl && platform !== "YOUTUBE"}
+      />
+      <PlayerProgress
+        currentTime={state.currentTime}
+        duration={state.duration}
+        onSeek={controls.seekTo}
         disabled={!embedUrl && platform !== "YOUTUBE"}
       />
     </div>

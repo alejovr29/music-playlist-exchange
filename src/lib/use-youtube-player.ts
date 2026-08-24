@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { getYouTubeEmbedUrl, getYouTubeVideoId } from "@/lib/media-platforms";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 interface YouTubePlayerState {
   isReady: boolean;
@@ -90,11 +89,16 @@ export function useYouTubePlayer(initialVideoId: string) {
 
     let intervalId: number | undefined; // To store the interval ID for clearing later
     let playerInstance: any; // To store the YouTube player instance
+    let cancelled = false;
 
     // Function to initialize the YouTube player
     const initializePlayer = async () => {
       try {
         await loadYouTubeApi(); // Load the YouTube API script and wait for it to be ready
+
+        if (cancelled) {
+          return;
+        }
 
         if (!containerRef.current) { // Check if the container ref is available
           throw new Error("YouTube player container not found.");
@@ -117,7 +121,12 @@ export function useYouTubePlayer(initialVideoId: string) {
             onReady: () => {
               playerRef.current = playerInstance;
               setReady(true);
-              setState((prev) => ({ ...prev, isReady: true, volume: playerInstance.getVolume() })); // Update state to indicate the player is ready and set the initial volume
+              setState((prev) => ({
+                ...prev,
+                isReady: true,
+                duration: Number.isFinite(playerInstance.getDuration()) ? playerInstance.getDuration() : 0,
+                volume: Number.isFinite(playerInstance.getVolume()) ? playerInstance.getVolume() : 100,
+              })); // The API provides these values once the player has finished initializing.
             },
             onStateChange: (event: any) => {
               const ytState = event.data;
@@ -136,15 +145,13 @@ export function useYouTubePlayer(initialVideoId: string) {
           },
         });
 
+        // Only currentTime changes continuously. The other values are updated by player events or user actions.
         intervalId = window.setInterval(() => {
           if (playerRef.current && playerRef.current.getDuration) {
-            setState((prev) => ({
-              ...prev,
-              currentTime: playerRef.current.getCurrentTime(),
-              duration: playerRef.current.getDuration(),
-              volume: playerRef.current.getVolume(),
-              muted: playerRef.current.isMuted(),
-            }));
+            const nextTime = playerRef.current.getCurrentTime();
+            setState((prev) => prev.currentTime === nextTime
+              ? prev
+              : { ...prev, currentTime: Number.isFinite(nextTime) ? nextTime : 0 });
           }
         }, 500);
       } catch (error: any) {
@@ -155,6 +162,7 @@ export function useYouTubePlayer(initialVideoId: string) {
     initializePlayer();
 
     return () => {
+      cancelled = true;
       if (intervalId) {
         window.clearInterval(intervalId);
       }
@@ -164,28 +172,40 @@ export function useYouTubePlayer(initialVideoId: string) {
     };
   }, [initialVideoId]);
 
-  const play = () => playerRef.current?.playVideo();
-  const pause = () => playerRef.current?.pauseVideo();
-  const stop = () => playerRef.current?.stopVideo();
-  const seekTo = (seconds: number) => playerRef.current?.seekTo(seconds, true);
-  const setVolume = (volume: number) => playerRef.current?.setVolume(volume);
-  const mute = () => playerRef.current?.mute();
-  const unMute = () => playerRef.current?.unMute();
-  const loadVideoById = (videoId: string) => playerRef.current?.loadVideoById(videoId);
+  const play = useCallback(() => playerRef.current?.playVideo(), []);
+  const pause = useCallback(() => playerRef.current?.pauseVideo(), []);
+  const stop = useCallback(() => playerRef.current?.stopVideo(), []);
+  const seekTo = useCallback((seconds: number) => playerRef.current?.seekTo(seconds, true), []);
+  const setVolume = useCallback((volume: number) => {
+    const safeVolume = Math.max(0, Math.min(100, volume));
+    playerRef.current?.setVolume(safeVolume);
+    setState((prev) => ({ ...prev, volume: safeVolume }));
+  }, []);
+  const mute = useCallback(() => {
+    playerRef.current?.mute();
+    setState((prev) => ({ ...prev, muted: true }));
+  }, []);
+  const unMute = useCallback(() => {
+    playerRef.current?.unMute();
+    setState((prev) => ({ ...prev, muted: false }));
+  }, []);
+  const loadVideoById = useCallback((videoId: string) => playerRef.current?.loadVideoById(videoId), []);
+
+  const controls = useMemo(() => ({
+    play,
+    pause,
+    stop,
+    seekTo,
+    setVolume,
+    mute,
+    unMute,
+    loadVideoById,
+  }), [play, pause, stop, seekTo, setVolume, mute, unMute, loadVideoById]);
 
   return {
     containerRef,
     ready,
     state,
-    controls: {
-      play,
-      pause,
-      stop,
-      seekTo,
-      setVolume,
-      mute,
-      unMute,
-      loadVideoById,
-    },
+    controls,
   };
 }

@@ -1,10 +1,10 @@
 "use client";
 
+import { memo } from "react";
+
 type PlayerControlsProps = {
   isReady: boolean;
   isPlaying: boolean;
-  currentTime: number;
-  duration: number;
   volume: number;
   muted: boolean;
   platform: string;
@@ -14,7 +14,6 @@ type PlayerControlsProps = {
   onMute: () => void;
   onUnmute: () => void;
   onVolumeChange: (value: number) => void;
-  onSeek: (value: number) => void;
   onPrev: () => void;
   onNext: () => void;
   disabled?: boolean;
@@ -26,11 +25,9 @@ function formatTime(seconds: number) {
   return `${minutes}:${secs.toString().padStart(2, "0")}`;
 }
 
-export default function PlayerControls({
+function PlayerControls({
   isReady,
   isPlaying,
-  currentTime,
-  duration,
   volume,
   muted,
   platform,
@@ -40,13 +37,10 @@ export default function PlayerControls({
   onMute,
   onUnmute,
   onVolumeChange,
-  onSeek,
   onPrev,
   onNext,
   disabled = false,
 }: PlayerControlsProps) {
-  const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
-
   return (
     <div className="space-y-4 rounded-3xl bg-slate-900 p-4 shadow-lg">
       <div className="flex items-center justify-between gap-4">
@@ -112,23 +106,6 @@ export default function PlayerControls({
 
       <div className="space-y-2">
         <div className="flex items-center justify-between text-sm text-slate-400">
-          <span>{formatTime(currentTime)}</span>
-          <span>{formatTime(duration)}</span>
-        </div>
-        <input
-          type="range"
-          min={0}
-          max={duration || 0}
-          step={0.1}
-          value={currentTime}
-          onChange={(event) => onSeek(Number(event.target.value))}
-          disabled={disabled || duration === 0}
-          className="w-full accent-teal-500"
-        />
-      </div>
-
-      <div className="space-y-2">
-        <div className="flex items-center justify-between text-sm text-slate-400">
           <span>Volume</span>
           <span>{volume}%</span>
         </div>
@@ -146,3 +123,39 @@ export default function PlayerControls({
     </div>
   );
 }
+
+export default memo(PlayerControls);
+
+type PlayerProgressProps = {
+  currentTime: number;
+  duration: number;
+  disabled?: boolean;
+  onSeek: (value: number) => void;
+};
+
+// This is the only control that needs to repaint while a video is playing.
+export const PlayerProgress = memo(function PlayerProgress({
+  currentTime,
+  duration,
+  disabled = false,
+  onSeek,
+}: PlayerProgressProps) {
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between text-sm text-slate-400">
+        <span>{formatTime(currentTime)}</span>
+        <span>{formatTime(duration)}</span>
+      </div>
+      <input
+        type="range"
+        min={0}
+        max={duration || 0}
+        step={0.1}
+        value={currentTime}
+        onChange={(event) => onSeek(Number(event.target.value))}
+        disabled={disabled || duration === 0}
+        className="w-full accent-teal-500"
+      />
+    </div>
+  );
+});
