@@ -31,7 +31,7 @@ export default function PlayerClient({ playlist, song, songs }: { playlist: Play
                     </div>
 
                     <div className="rounded-3xl bg-slate-900 p-4 shadow-xl">
-                        <SongsSidebar songs={songs} playlist={playlist} onSongSelect={handleChangeSong} />
+                        <SongsSidebar songs={songs} playlist={playlist} currentSong={currentSong.id} onSongSelect={handleChangeSong} />
                     </div>
                 </div>
             </div>
