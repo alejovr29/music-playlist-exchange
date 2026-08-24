@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Playlist, Song } from "@/types/music";
+import { FaYoutube, FaSpotify } from "react-icons/fa";
+import { MdMusicOff } from "react-icons/md";
 
 export default function PlaylistClient({ playlistId }: { playlistId: number }) {
     const router = useRouter();
@@ -12,6 +14,7 @@ export default function PlaylistClient({ playlistId }: { playlistId: number }) {
     const [showForm, setShowForm] = useState(false);
     const [submitStatus, setSubmitStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
     const [errorMessage, setErrorMessage] = useState("");
+    const platformIcon = playlist?.platform === "YOUTUBE" ? <FaYoutube className="text-red-600" /> : playlist?.platform === "SPOTIFY" ? <FaSpotify className="text-green-500" /> : <MdMusicOff />;
 
     // Song form states
     const [externalUrl, setExternalUrl] = useState("");
@@ -84,9 +87,16 @@ export default function PlaylistClient({ playlistId }: { playlistId: number }) {
 
     return (
         <main className="p-6">
-            <h1 className="text-3xl font-bold mb-8">
-                {playlist?.name}'s songs
-            </h1>
+            <div className="text-3xl flex items-center gap-3 mb-8 items-end">
+                <h1 className="font-bold">
+                    {playlist?.name}'s songs
+                </h1>
+                <span>|</span>
+                {/* Displays the platform icon with a tooltip explaining the platform restriction for the playlist */}
+                <span title={`${playlist?.platform} Playlist's (All songs listed here must come from this platform.)`} className="cursor-help">
+                    {platformIcon}
+                </span>
+            </div>
 
             {songs.length === 0 ? (
                 <div>
