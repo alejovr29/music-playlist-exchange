@@ -121,7 +121,7 @@ export default function LibraryPage() {
             {
                 showForm && (
                     <form onSubmit={handleCreatePlaylist} className="mt-4 space-y-4">
-                        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                        <div className="flex flex-col gap-2 sm:flex-row sm:items-center max-w-xl">
                             <input
                                 type="text"
                                 placeholder="Playlist name"
@@ -130,10 +130,11 @@ export default function LibraryPage() {
                                 className="p-2 rounded text-white bg-slate-500 flex-1"
                                 required
                             />
+                            <label htmlFor="platform" className="text-md text-slate-300 ml-2">Platform:</label>
                             <select
                                 value={platform}
                                 onChange={(e) => setPlatform(e.target.value as Platform)}
-                                className="p-2 rounded text-white bg-slate-500"
+                                className="p-2 rounded text-white bg-slate-500 cursor-pointer"
                             >
                                 <option value="YOUTUBE">YouTube</option>
                                 <option value="SPOTIFY">Spotify</option>
