@@ -61,12 +61,14 @@ export default function PlaylistClient({ playlistId }: { playlistId: number }) {
                 setShowForm(false);
 
                 setTimeout(() => setSubmitStatus("idle"), 5000);
-            } else if (response.status === 409) {
-                setErrorMessage(data.message);
-                setSubmitStatus("error");
-                setTimeout(() => setSubmitStatus("idle"), 5000);
             } else {
+                setErrorMessage(
+                    data.error ??
+                    data.message ??
+                    "Unable to add song."
+                );
                 setSubmitStatus("error");
+
                 setTimeout(() => setSubmitStatus("idle"), 5000);
             }
         } catch (error) {

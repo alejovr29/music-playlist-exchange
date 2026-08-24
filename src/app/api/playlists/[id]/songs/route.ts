@@ -117,6 +117,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     }
 
     if (playlist.platform !== platform) {
+        // returns an error message to display in the frontend, indicating that the song's platform does not match the playlist's platform. This is a security measure to ensure that users cannot add songs from different platforms to a playlist that is restricted to a specific platform.
         return NextResponse.json({ error: `Playlist accepts ${playlist.platform} songs only.` }, { status: 400 });
     }
 
