@@ -32,6 +32,32 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+.songs-scrollbar {
+  scrollbar-color: #155e75 transparent;
+  scrollbar-width: thin;
+}
+
+.songs-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.songs-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.songs-scrollbar::-webkit-scrollbar-thumb {
+  background: #155e75;
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background-clip: padding-box;
+}
+
+.songs-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #22d3ee;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
 /* Ensure all elements respect box-sizing */
 /* html * {
   box-sizing: border-box;
