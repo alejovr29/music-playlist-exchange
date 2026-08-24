@@ -87,7 +87,7 @@ export default function PlaylistClient({ playlistId }: { playlistId: number }) {
 
     return (
         <main className="p-6">
-            <div className="text-3xl flex items-center gap-3 mb-8 items-end">
+            <div className="text-3xl flex gap-3 mb-8 items-end">
                 <h1 className="font-bold">
                     {playlist?.name}'s songs
                 </h1>

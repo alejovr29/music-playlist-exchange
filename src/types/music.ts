@@ -14,4 +14,10 @@ export interface Playlist {
   id: number;
   name: string;
   platform: Platform;
+  userId: number;
+  isPublic: boolean;
+  user?: {
+    id: number;
+    name: string | null;
+  };
 }

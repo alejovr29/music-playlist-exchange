@@ -33,6 +33,14 @@ export default async function PlayerPage({ params }: { params: Promise<{ id: str
     // Is playlist valid?
     const playlist = await prisma.playlist.findUnique({
         where: { id: playlistId },
+        include: {
+            user: {
+                select: {
+                    id: true,
+                    name: true,
+                }
+            }
+        }
     });
 
     // Is song valid?

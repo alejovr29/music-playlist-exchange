@@ -1,10 +1,19 @@
-import type { Song } from "@/types/music";
+import type { Playlist, Song } from "@/types/music";
 
-const SongsSidebar = ({ songs, onSongSelect }: { songs: Song[]; onSongSelect: (songId: number) => void }) => {
+const SongsSidebar = ({ songs, playlist, onSongSelect }: { songs: Song[]; playlist: Playlist; onSongSelect: (songId: number) => void }) => {
+
+    const playlistName = playlist.name.length > 20 ? playlist.name.slice(0, 20) + "..." : playlist.name;
+    const privacy = playlist.isPublic ? "Public" : "Private";
+
     return (
         <div className="flex h-[calc(100vh-4rem)] flex-col gap-4 overflow-y-auto">
-            <div className="rounded-3xl bg-slate-950 p-4 shadow-inner">
-                <p className="text-sm text-slate-400">Playlist contains {songs.length} songs.</p>
+            <div className="rounded-3xl bg-slate-950 p-4 shadow-inner flex text-slate-400 items-center gap-2">
+                <p className="text-lg cursor-pointer">{playlistName}</p>
+                <p className="text-sm ">({songs.length} songs)</p>
+            </div>
+            <div className="rounded-3xl bg-slate-950 p-4 shadow-inner flex text-slate-400 items-center gap-2">
+                <p className="text-lg cursor-pointer">By {playlist.user?.name || "Unknown Artist"}</p>
+                <p className="text-sm ">| {privacy}</p>
             </div>
 
             <div className="space-y-3">
