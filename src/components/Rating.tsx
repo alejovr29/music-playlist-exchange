@@ -25,6 +25,7 @@ const Rating = ({ playlist, song }: { playlist: Playlist; song: Song }) => {
                     setSongRating(data?.vote?.value)
                 } else {
                     console.log('No rating found for this song.')
+                    setSongRating(0)
                 }
             }
             catch (error) {
@@ -32,7 +33,7 @@ const Rating = ({ playlist, song }: { playlist: Playlist; song: Song }) => {
             }
         }
         fetchSongRatingData();
-    }, [song, router]);
+    }, [songId, playlistId]);
 
     const handleMouseEnter = (value: number) => setHoverRating(value);
     const handleMouseLeave = () => setHoverRating(0);
