@@ -37,14 +37,19 @@ const SongPlayer = ({ song, songs, onSongChange }: SongPlayerProps) => {
 
   const songIndex = useMemo(() => songs.findIndex((item) => item.id === song.id), [songs, song.id]);
 
+
   const handlePrev = useCallback(() => {
-    if (songIndex > 0) {
+    if (songIndex === 0) {
+      onSongChange(songs[songs.length - 1].id);
+    } else {
       onSongChange(songs[songIndex - 1].id);
     }
   }, [onSongChange, songIndex, songs]);
 
   const handleNext = useCallback(() => {
-    if (songIndex < songs.length - 1) {
+    if (songIndex === songs.length - 1) {
+      onSongChange(songs[0].id);
+    } else {
       onSongChange(songs[songIndex + 1].id);
     }
   }, [onSongChange, songIndex, songs]);
