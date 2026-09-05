@@ -1,4 +1,4 @@
-import { memo, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import type { Playlist, Song } from "@/types/music";
 
 type SongsSidebarProps = {
@@ -10,6 +10,9 @@ type SongsSidebarProps = {
 
 const SongsSidebar = ({ songs, playlist, currentSong, onSongSelect }: SongsSidebarProps) => {
     const [isCollapsed, setIsCollapsed] = useState(false);
+    const songsContainerRef = useRef<HTMLElement>(null);
+    const activeSongRef = useRef<HTMLButtonElement>(null);
+    const savedScrollTopRef = useRef(0);
 
     const playlistName = playlist.name.length > 20 ? playlist.name.slice(0, 20) + "..." : playlist.name;
     const playlistUser = playlist.user?.name || "Unknown user";
@@ -21,6 +24,38 @@ const SongsSidebar = ({ songs, playlist, currentSong, onSongSelect }: SongsSideb
     }
 
     const visibleSongs = isCollapsed ? songs.filter((song) => song.id === currentSong) : songs;
+
+    // Scroll the active song into view when the selected song changes.
+    useEffect(() => {
+        const container = songsContainerRef.current;
+        const activeSong = activeSongRef.current;
+
+        if (!container || !activeSong) return;
+
+        const containerBounds = container.getBoundingClientRect();
+        const songBounds = activeSong.getBoundingClientRect();
+        const centeredScroll =
+            container.scrollTop +
+            songBounds.top -
+            containerBounds.top -
+            (container.clientHeight - songBounds.height) / 2;
+        const maximumScroll = container.scrollHeight - container.clientHeight;
+        const boundedScroll = Math.max(0, Math.min(centeredScroll, maximumScroll));
+
+        container.scrollTo({
+            top: boundedScroll,
+            behavior: "smooth",
+        });
+    }, [currentSong, songs]);
+
+    useEffect(() => {
+        if (!isCollapsed) {
+            const container = songsContainerRef.current;
+            if (container) {
+                container.scrollTop = Math.min(savedScrollTopRef.current, container.scrollHeight - container.clientHeight);
+            }
+        }
+    }, [isCollapsed]);
 
     const handleShare = async () => {
         const shareUrl = window.location.href;
@@ -44,7 +79,7 @@ const SongsSidebar = ({ songs, playlist, currentSong, onSongSelect }: SongsSideb
                 </p>
             </section>
 
-            <section className="songs-scrollbar max-h-[41rem] overflow-y-auto p-3">
+            <section ref={songsContainerRef} className="songs-scrollbar max-h-[41rem] overflow-y-auto p-3">
                 <div className="space-y-3">
                     {visibleSongs.map((song) => {
                         const isActive = song.id === currentSong;
@@ -54,6 +89,7 @@ const SongsSidebar = ({ songs, playlist, currentSong, onSongSelect }: SongsSideb
                             <button
                                 key={song.id}
                                 type="button"
+                                ref={isActive ? activeSongRef : null}
                                 onClick={() => onSongSelect(song.id)}
                                 aria-current={isActive ? "true" : undefined}
                                 className={isActive ? songsStyles.active : songsStyles.normal}
@@ -72,7 +108,9 @@ const SongsSidebar = ({ songs, playlist, currentSong, onSongSelect }: SongsSideb
                                 <div className="min-w-0">
                                     <p className="truncate text-left text-sm font-semibold text-white">{songTitle}</p>
                                     <p className="truncate text-left text-sm text-slate-400">{song.artist}</p>
-                                    {isActive && <p className="mt-1 text-[10px] uppercase tracking-widest text-cyan-300">Playing</p>}
+                                    <p className="mt-1 h-3 text-[10px] uppercase tracking-widest text-cyan-300">
+                                        {isActive ? "Playing" : ""}
+                                    </p>
                                 </div>
                             </button>
                         );
@@ -83,7 +121,12 @@ const SongsSidebar = ({ songs, playlist, currentSong, onSongSelect }: SongsSideb
             <section className="grid shrink-0 grid-cols-[1fr_2fr] gap-2 border-t border-slate-700/70 p-3">
                 <button
                     type="button"
-                    onClick={() => setIsCollapsed((collapsed) => !collapsed)}
+                    onClick={() => {
+                        if (!isCollapsed && songsContainerRef.current) {
+                            savedScrollTopRef.current = songsContainerRef.current.scrollTop;
+                        }
+                        setIsCollapsed((collapsed) => !collapsed);
+                    }}
                     aria-expanded={!isCollapsed}
                     className="rounded-xl border border-slate-700 px-3 py-2 text-sm font-medium text-slate-300 transition hover:border-cyan-400 hover:text-white"
                 >
@@ -109,6 +152,7 @@ export default memo(SongsSidebar, (previous, next) => (
     previous.playlist.name === next.playlist.name &&
     previous.playlist.userId === next.playlist.userId &&
     previous.playlist.isPublic === next.playlist.isPublic &&
+    previous.playlist.user?.name === next.playlist.user?.name &&
     previous.currentSong === next.currentSong &&
     previous.onSongSelect === next.onSongSelect
 ));
