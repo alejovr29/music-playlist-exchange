@@ -83,6 +83,17 @@ export function useYouTubePlayer(initialVideoId: string) {
   });
 
   useEffect(() => {
+    setReady(false);
+    setState((previous) => ({
+      ...previous,
+      isReady: false,
+      isPlaying: false,
+      duration: 0,
+      currentTime: 0,
+      muted: false,
+      error: null,
+    }));
+
     if (!initialVideoId) {
       return;
     }

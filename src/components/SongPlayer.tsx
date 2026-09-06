@@ -1,9 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useYouTubePlayer } from "@/lib/use-youtube-player";
 import { getPlatformFromUrl, getSpotifyEmbedUrl, getYouTubeEmbedUrl, getYouTubeVideoId } from "@/lib/media-platforms";
-import PlayerControls, { PlayerProgress } from "@/components/PlayerControls";
+import PlayerControls from "@/components/PlayerControls";
 import type { Song } from "@/types/music";
 
 interface SongPlayerProps {
@@ -27,13 +27,7 @@ const SongPlayer = ({ song, songs, onSongChange }: SongPlayerProps) => {
     [platform, youTubeVideoId]
   );
 
-  const { containerRef, ready, state, controls } = useYouTubePlayer(youTubeVideoId ?? "");
-
-  // useEffect(() => {
-  //   if (platform === "YOUTUBE" && youTubeVideoId && ready) {
-  //     controls.loadVideoById(youTubeVideoId);
-  //   }
-  // }, [platform, youTubeVideoId, ready, controls]);
+  const { containerRef, state, controls } = useYouTubePlayer(youTubeVideoId ?? "");
 
   const songIndex = useMemo(() => songs.findIndex((item) => item.id === song.id), [songs, song.id]);
 
@@ -57,7 +51,7 @@ const SongPlayer = ({ song, songs, onSongChange }: SongPlayerProps) => {
   const embedUrl = platform === "YOUTUBE" ? youTubeEmbedUrl : spotifyEmbedUrl;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-48 lg:pb-28">
 
       <div className="aspect-video overflow-hidden rounded-3xl bg-black">
         {platform === "YOUTUBE" ? (
@@ -84,25 +78,20 @@ const SongPlayer = ({ song, songs, onSongChange }: SongPlayerProps) => {
       </div>
 
       <PlayerControls
-        isReady={ready}
+        song={song}
         isPlaying={state.isPlaying}
         volume={state.volume}
         muted={state.muted}
-        platform={platform}
+        currentTime={state.currentTime}
+        duration={state.duration}
         onPlay={controls.play}
         onPause={controls.pause}
-        onStop={controls.stop}
         onMute={controls.mute}
         onUnmute={controls.unMute}
         onVolumeChange={controls.setVolume}
+        onSeek={controls.seekTo}
         onPrev={handlePrev}
         onNext={handleNext}
-        disabled={!embedUrl && platform !== "YOUTUBE"}
-      />
-      <PlayerProgress
-        currentTime={state.currentTime}
-        duration={state.duration}
-        onSeek={controls.seekTo}
         disabled={!embedUrl && platform !== "YOUTUBE"}
       />
     </div>
