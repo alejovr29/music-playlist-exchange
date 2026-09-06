@@ -140,7 +140,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
         song = await prisma.song.create({
             data: {
                 title: urlMetadata?.title ?? "Unknown title",
-                artist: urlMetadata?.author_name ?? "Unknown artist",
+                artist: urlMetadata?.author_name?.replace("- Topic", "").trim() ?? "Unknown artist", // Removes "- Topic" from Youtube Music artist names, if present.
                 album: "none",
                 imageUrl: urlMetadata?.thumbnail_url ?? null,
                 externalUrl: externalUrl,
