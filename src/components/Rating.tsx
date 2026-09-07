@@ -1,11 +1,9 @@
 import type { Playlist, Song } from "@/types/music";
-import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { FaStar, FaRegStar } from "react-icons/fa";
 
 const Rating = ({ playlist, song }: { playlist: Playlist; song: Song }) => {
 
-    const router = useRouter();
     const playlistId = playlist.id;
     const songId = song.id;
 
@@ -60,14 +58,15 @@ const Rating = ({ playlist, song }: { playlist: Playlist; song: Song }) => {
     }
 
     return (
-        <>
-            <div className="flex mt-2 text-amber-300">
-                <p className="text-sm text-slate-400">Rate this song:</p>&nbsp;
+        <div className="flex flex-col items-center gap-2 border-t border-slate-800/80 pt-5 text-center">
+            <p className="text-lg font-medium tracking-wide text-slate-300">Rate this song</p>
+            <div className="flex items-center justify-center gap-1 text-4xl text-amber-300">
                 {[1, 2, 3, 4, 5].map((value) => (
                     <button
                         key={value}
                         type="button"
-                        className="cursor-pointer px-0.5"
+                        aria-label={`Rate ${value} out of 5`}
+                        className="flex cursor-pointer items-center p-1 transition hover:scale-110 hover:text-amber-200"
                         onMouseEnter={() => handleMouseEnter(value)}
                         onMouseLeave={handleMouseLeave}
                         onClick={() => handleRateSong(value)}
@@ -76,7 +75,7 @@ const Rating = ({ playlist, song }: { playlist: Playlist; song: Song }) => {
                     </button>
                 ))}
             </div>
-        </>
+        </div>
     )
 }
 

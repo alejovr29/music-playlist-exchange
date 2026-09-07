@@ -51,7 +51,7 @@ const SongPlayer = ({ song, songs, onSongChange }: SongPlayerProps) => {
   const embedUrl = platform === "YOUTUBE" ? youTubeEmbedUrl : spotifyEmbedUrl;
 
   return (
-    <div className="space-y-6 pb-48 lg:pb-28">
+    <div className="space-y-4">
 
       <div className="aspect-video overflow-hidden rounded-3xl bg-black">
         {platform === "YOUTUBE" ? (
@@ -72,10 +72,10 @@ const SongPlayer = ({ song, songs, onSongChange }: SongPlayerProps) => {
         )}
       </div>
 
-      <div className="rounded-3xl bg-slate-950 p-6 shadow-lg">
+      {/* <div className="rounded-3xl bg-slate-950 p-6 shadow-lg">
         <h2 className="text-3xl font-semibold">{song.title}</h2>
         <p className="mt-1 text-sm text-slate-400">{song.artist}</p>
-      </div>
+      </div> */}
 
       <PlayerControls
         song={song}

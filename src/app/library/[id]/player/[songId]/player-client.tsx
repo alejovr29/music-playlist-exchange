@@ -37,7 +37,7 @@ export default function PlayerClient({ playlist, song, songs }: { playlist: Play
     return (
         <div className="min-h-screen text-white">
             <div className="mx-auto max-w-[1600px] px-4 py-6">
-                <div className="grid gap-6 lg:grid-cols-[3fr_1fr]">
+                <div className="grid gap-6 lg:grid-cols-[2.5fr_1fr]">
                     <div className="sticky top-6 self-start rounded-3xl bg-slate-900 p-6 shadow-xl">
                         <SongPlayer song={currentSong} songs={songs} onSongChange={handleChangeSong} />
                         <Rating playlist={playlist} song={currentSong} />
