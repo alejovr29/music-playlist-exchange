@@ -41,7 +41,7 @@ const SongsSidebar = ({ songs, playlist, currentSong, onSongSelect }: SongsSideb
             container.scrollTop +
             songBounds.top -
             containerBounds.top -
-            (container.clientHeight - songBounds.height) / 1.27;
+            (container.clientHeight - songBounds.height) / 2.48;
         const maximumScroll = container.scrollHeight - container.clientHeight;
         const boundedScroll = Math.max(0, Math.min(centeredScroll, maximumScroll));
 
