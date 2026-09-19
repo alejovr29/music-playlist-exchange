@@ -182,15 +182,14 @@ body {
 }
 
 .playlist-songs-viewport {
-  max-height: 39rem;
-  overflow-y: auto;
-  padding: 0.5rem 1rem 1.5rem 0.25rem;
+  padding: 0.1rem 1rem 1.5rem;
 }
 
 .playlist-songs-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.75rem 1.25rem;
+  gap: 2rem 3.25rem;
+  padding-inline: 0.5rem;
 }
 
 .vinyl-card {
@@ -200,7 +199,7 @@ body {
 
 .vinyl-artwork {
   position: relative;
-  aspect-ratio: 1;
+  aspect-ratio: 1 / 0.84;
   isolation: isolate;
 }
 
@@ -209,10 +208,12 @@ body {
   z-index: 2;
   display: block;
   width: 84%;
-  height: 84%;
+  height: 100%;
   border: 1px solid rgb(226 232 240 / 30%);
   border-radius: 0;
-  object-fit: cover;
+  background: #020617;
+  object-fit: none;
+  object-position: 50% 50%;
   box-shadow: 0 16px 24px rgb(0 0 0 / 35%);
   transition: transform 240ms ease, box-shadow 240ms ease;
 }
@@ -220,13 +221,13 @@ body {
 .vinyl-disc {
   position: absolute;
   z-index: 1;
-  top: 4%;
+  top: 0;
   right: 0;
-  width: 84%;
-  height: 84%;
+  width: 80%;
+  height: 100%;
   border: 1px solid rgb(226 232 240 / 18%);
   border-radius: 999px;
-  background: radial-gradient(circle at center, #94a3b8 0 4%, #0f172a 4.5% 11%, #334155 11.5% 12%, #020617 12.5% 25%, #111827 25.5% 26%, #020617 26.5% 46%, #1e293b 46.5% 47%, #020617 47.5% 100%);
+  background: radial-gradient(circle at center, #94a3b8 0 4%, #0f172a 4.5% 11%, #334155 11.5% 12%, #020617 12.5% 25%, #111827 25.5% 22%, #020617 26.5% 46%, #1e293b 46.5% 47%, #020617 47.5% 100%);
   box-shadow: 0 15px 25px rgb(0 0 0 / 45%);
   transition: transform 240ms ease;
 }
@@ -242,11 +243,11 @@ body {
 .vinyl-play {
   position: absolute;
   z-index: 3;
-  top: 50%;
+  top: 45%;
   left: 76%;
   display: flex;
-  height: 2.5rem;
-  width: 2.5rem;
+  height: 3rem;
+  width: 3rem;
   align-items: center;
   justify-content: center;
   border-radius: 999px;
@@ -261,10 +262,10 @@ body {
   position: absolute;
   z-index: 4;
   top: 0.5rem;
-  right: 0.5rem;
+  left: 0.5rem;
   display: flex;
-  height: 1.9rem;
-  width: 1.9rem;
+  height: 2.5rem;
+  width: 2.5rem;
   align-items: center;
   justify-content: center;
   border-radius: 999px;
@@ -284,7 +285,7 @@ body {
 }
 
 .vinyl-card:hover .vinyl-disc {
-  transform: translateX(12%);
+  transform: translateX(8%);
 }
 
 .vinyl-card:hover .vinyl-play,
@@ -294,6 +295,22 @@ body {
 
 .vinyl-card:hover .vinyl-play {
   transform: translate(-50%, -50%) scale(1);
+}
+
+.vinyl-card h3 {
+  transition: color 180ms ease;
+}
+
+.vinyl-card p {
+  transition: color 180ms ease;
+}
+
+.vinyl-card:hover h3 {
+  color: #a5f3fc;
+}
+
+.vinyl-card:hover p {
+  color: #67e8f9;
 }
 
 @media (min-width: 768px) {
@@ -310,7 +327,6 @@ body {
 
 @media (max-width: 767px) {
   .playlist-songs-viewport {
-    max-height: none;
     overflow: visible;
   }
 }

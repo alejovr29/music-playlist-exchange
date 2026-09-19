@@ -24,6 +24,7 @@ export default function PlaylistClient({ playlistId }: { playlistId: number }) {
     const [submitStatus, setSubmitStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
     const [errorMessage, setErrorMessage] = useState("");
     const platformIcon = playlist?.platform === "YOUTUBE" ? <FaYoutube className="text-red-600" /> : playlist?.platform === "SPOTIFY" ? <FaSpotify className="text-green-500" /> : <MdMusicOff />;
+    const platformMessage = playlist?.platform === "YOUTUBE" ? "Paste a YouTube URL" : "Paste a Spotify URL";
 
     // Song form states
     const [externalUrl, setExternalUrl] = useState("");
@@ -68,7 +69,7 @@ export default function PlaylistClient({ playlistId }: { playlistId: number }) {
 
             if (response.ok) {
                 setSubmitStatus("success");
-                setSongs([...songs, data.song]);
+                setSongs([data.song, ...songs]);
                 setExternalUrl("");
                 setShowForm(false);
 
@@ -134,7 +135,7 @@ export default function PlaylistClient({ playlistId }: { playlistId: number }) {
 
                         {showForm && (
                             <form onSubmit={handleCreateSongInPlaylist} className="playlist-add-form mt-4 flex flex-col gap-3 sm:flex-row">
-                                <input type="url" required placeholder="Paste a YouTube or Spotify URL" value={externalUrl} onChange={(e) => setExternalUrl(e.target.value)} className="min-w-0 flex-1 rounded-xl border border-white/15 bg-slate-950/70 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-300/70" />
+                                <input type="url" required placeholder={platformMessage} value={externalUrl} onChange={(e) => setExternalUrl(e.target.value)} className="min-w-0 flex-1 rounded-xl border border-white/15 bg-slate-950/70 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-300/70" />
                                 <button type="submit" disabled={submitStatus === "loading"} className="playlist-primary-button justify-center disabled:cursor-wait disabled:opacity-60">{submitStatus === "loading" ? "Adding..." : "Save song"}</button>
                                 <button type="button" onClick={() => { setShowForm(false); setExternalUrl(""); setSubmitStatus("idle"); }} className="playlist-cancel-button">Cancel</button>
                             </form>
@@ -168,8 +169,8 @@ export default function PlaylistClient({ playlistId }: { playlistId: number }) {
                                         <div className="vinyl-play" aria-hidden="true"><FaPlay /></div>
                                         <button type="button" aria-label={`Edit ${song.title}`} title="Edit song" onClick={(event) => event.stopPropagation()} className="vinyl-edit"><FaPen /></button>
                                     </div>
-                                    <h3 className="mt-3 truncate text-sm font-semibold text-white">{song.title}</h3>
-                                    <p className="mt-1 truncate text-sm text-slate-500">{song.artist}</p>
+                                    <h3 className="truncate text-sm font-semibold text-white">{song.title}</h3>
+                                    <p className="mt-1 mb-3 truncate text-sm text-slate-500">{song.artist}</p>
                                 </article>
                             ))}
                         </div>

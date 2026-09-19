@@ -52,9 +52,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     const playlistSongs = await prisma.playlistSong.findMany({
         where: { playlistId },
         orderBy: {
-            song: {
-                createdAt: "desc",
-            },
+            createdAt: "desc",
         },
         include: { song: true },
     });
@@ -104,8 +102,10 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
+    const normalizedExternalUrl = typeof externalUrl === "string" ? externalUrl.trim() : "";
+
     // Validate required fields
-    if (!externalUrl || !playlistId) {
+    if (!normalizedExternalUrl || !playlistId) {
         return NextResponse.json(
             { error: "Missing required fields" },
             { status: 400 }
@@ -115,7 +115,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     // Convert playlistID provided by URL to a number, since it's received as a string
     const playlistIdNumber = Number(playlistId);
 
-    const platform = getPlatformFromUrl(externalUrl);
+    const platform = getPlatformFromUrl(normalizedExternalUrl);
 
     if (!platform) {
         return NextResponse.json({ error: "Unsupported provider or invalid URL." }, { status: 400 });
@@ -126,10 +126,24 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
         return NextResponse.json({ error: `Playlist accepts ${playlist.platform} songs only.` }, { status: 400 });
     }
 
+    const existingSongInPlaylist = await prisma.playlistSong.findFirst({
+        where: {
+            playlistId: playlistIdNumber,
+            song: { externalUrl: normalizedExternalUrl },
+        },
+        select: { songId: true },
+    });
+
+    if (existingSongInPlaylist) {
+        return NextResponse.json(
+            { message: "Song already in playlist" }, { status: 409 }
+        );
+    }
+
     const urlMetadata =
         platform === "YOUTUBE"
-            ? await fetchYouTubeOEmbed(externalUrl)
-            : await fetchSpotifyOEmbed(externalUrl);
+            ? await fetchYouTubeOEmbed(normalizedExternalUrl)
+            : await fetchSpotifyOEmbed(normalizedExternalUrl);
 
     if (!urlMetadata) {
         return NextResponse.json({ error: "Unable to fetch metadata for the provided URL" }, { status: 400 });
@@ -137,7 +151,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
 
     // Obtains song from DB
     let song = await prisma.song.findFirst({
-        where: { title: urlMetadata?.title ?? "Unknown title", artist: urlMetadata?.author_name ?? "Unknown artist" },
+        where: { externalUrl: normalizedExternalUrl },
     });
 
     // If song doesn't exist, creates it in the DB
@@ -148,7 +162,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
                 artist: urlMetadata?.author_name?.replace("- Topic", "").trim() ?? "Unknown artist", // Removes "- Topic" from Youtube Music artist names, if present.
                 album: "none",
                 imageUrl: urlMetadata?.thumbnail_url ?? null,
-                externalUrl: externalUrl,
+                externalUrl: normalizedExternalUrl,
                 platform,
             },
         });
