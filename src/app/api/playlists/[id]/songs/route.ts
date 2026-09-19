@@ -51,6 +51,11 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     // Fetch songs for the retrieved playlist
     const playlistSongs = await prisma.playlistSong.findMany({
         where: { playlistId },
+        orderBy: {
+            song: {
+                createdAt: "desc",
+            },
+        },
         include: { song: true },
     });
 

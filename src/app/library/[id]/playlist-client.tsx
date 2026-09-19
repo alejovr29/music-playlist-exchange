@@ -4,6 +4,15 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Playlist, Song } from "@/types/music";
 import { FaYoutube, FaSpotify } from "react-icons/fa";
+import {
+    FaArrowRight,
+    FaGear,
+    FaHeart,
+    FaPen,
+    FaPlay,
+    FaPlus,
+    FaSliders,
+} from "react-icons/fa6";
 import { MdMusicOff } from "react-icons/md";
 
 export default function PlaylistClient({ playlistId }: { playlistId: number }) {
@@ -85,106 +94,88 @@ export default function PlaylistClient({ playlistId }: { playlistId: number }) {
         return <p className="p-4">Loading playlist...</p>;
     }
 
+    const featuredImage = songs.find((song) => song.imageUrl)?.imageUrl ?? null;
+
     return (
-        <main className="p-6">
-            <div className="text-3xl flex gap-3 mb-8 items-end">
-                <h1 className="font-bold">
-                    {playlist?.name}'s songs
-                </h1>
-                <span>|</span>
-                {/* Displays the platform icon with a tooltip explaining the platform restriction for the playlist */}
-                <span title={`${playlist?.platform} Playlist's (All songs listed here must come from this platform.)`} className="cursor-help">
-                    {platformIcon}
-                </span>
-            </div>
-
-            {songs.length === 0 ? (
-                <div>
-                    <p>No songs yet. Add your first song 👇</p>
-                    <button
-                        onClick={() => setShowForm(!showForm)}
-                        className="bg-indigo-600 p-4 rounded w-48 h-48 cursor-pointer"
-                    >
-                        Add Song
-                    </button>
-                </div>
-            ) : (
-                <div className="flex gap-4 items-center flex-wrap">
-                    <button
-                        onClick={() => setShowForm(!showForm)}
-                        className="bg-indigo-500 flex gap-4 p-4 rounded w-48 h-48 cursor-pointer"
-                    >
-                        + New Song
-                    </button>
-
-                    {songs.map((song) => (
-                        <div key={song.id} className="bg-teal-500 p-4 rounded w-48 h-48 cursor-pointer" onClick={() => router.push(`/library/${playlistId}/player/${song.id}`)}>
-                            {song.title}
-                            <p className="text-sm text-gray-600">{song.artist}</p>
-                            <p className="text-sm text-gray-600">{song.album}</p>
-                            {song.imageUrl && (
-                                <img
-                                    src={song.imageUrl}
-                                    alt={song.title}
-                                    className="mt-2 w-20 h-20 object-fill rounded"
-                                />
-                            )}
+        <main className="playlist-page min-h-full w-full text-slate-100">
+            <section
+                className="playlist-hero relative overflow-hidden rounded-b-[2rem] border-b border-cyan-200/10 bg-slate-950 shadow-2xl"
+                style={featuredImage ? { "--playlist-image": `url(${featuredImage})` } as React.CSSProperties : undefined}
+            >
+                <div className="playlist-hero-backdrop" aria-hidden="true" />
+                <div className="relative flex min-h-[18rem] flex-col justify-between gap-8 p-6 sm:p-8 lg:min-h-[21rem] lg:p-10">
+                    <div className="flex items-start justify-between gap-6">
+                        <div className="min-w-0">
+                            <div className="flex items-center gap-2 text-sm text-slate-300">
+                                <button type="button" onClick={() => router.push("/library")} className="transition hover:text-cyan-200">Library</button>
+                                <FaArrowRight className="text-xs text-cyan-300/70" aria-hidden="true" />
+                                <span className="truncate text-slate-500">{playlist?.name}</span>
+                            </div>
+                            <div className="mt-4 flex items-center gap-3">
+                                <h1 className="truncate text-3xl font-semibold tracking-tight text-white sm:text-4xl">{playlist?.name}</h1>
+                                <span title={`${playlist?.platform} playlist`} className="shrink-0 text-2xl">{platformIcon}</span>
+                            </div>
                         </div>
-                    ))}
+                        <button type="button" aria-label="Playlist settings" title="Playlist settings" className="playlist-icon-button"><FaGear aria-hidden="true" /></button>
+                    </div>
+
+                    <div className="max-w-3xl">
+                        <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-slate-300">
+                            <span>{songs.length} {songs.length === 1 ? "song" : "songs"}</span>
+                            <span className="text-slate-600">|</span>
+                            <span className="text-cyan-100/80">Total duration unavailable</span>
+                        </div>
+                        <div className="mt-4 flex flex-wrap items-center gap-4">
+                            <button type="button" onClick={() => setShowForm((visible) => !visible)} className="playlist-primary-button"><FaPlus aria-hidden="true" />Add Song</button>
+                            <span className="text-slate-500">|</span>
+                            <button type="button" onClick={() => songs[0] && router.push(`/library/${playlistId}/player/${songs[0].id}`)} disabled={songs.length === 0} className="playlist-action-button disabled:cursor-not-allowed disabled:opacity-40"><FaPlay aria-hidden="true" />Listen</button>
+                            <button type="button" aria-label="Save playlist as favorite" title="Save as favorite" className="playlist-action-button px-2 hover:text-rose-300"><FaHeart aria-hidden="true" /></button>
+                        </div>
+
+                        {showForm && (
+                            <form onSubmit={handleCreateSongInPlaylist} className="playlist-add-form mt-4 flex flex-col gap-3 sm:flex-row">
+                                <input type="url" required placeholder="Paste a YouTube or Spotify URL" value={externalUrl} onChange={(e) => setExternalUrl(e.target.value)} className="min-w-0 flex-1 rounded-xl border border-white/15 bg-slate-950/70 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-300/70" />
+                                <button type="submit" disabled={submitStatus === "loading"} className="playlist-primary-button justify-center disabled:cursor-wait disabled:opacity-60">{submitStatus === "loading" ? "Adding..." : "Save song"}</button>
+                                <button type="button" onClick={() => { setShowForm(false); setExternalUrl(""); setSubmitStatus("idle"); }} className="playlist-cancel-button">Cancel</button>
+                            </form>
+                        )}
+
+                        {submitStatus !== "idle" && submitStatus !== "loading" && <p className={`mt-3 text-sm ${submitStatus === "success" ? "text-emerald-300" : "text-rose-300"}`}>{submitStatus === "success" ? "Song added successfully." : errorMessage || "Unable to add song."}</p>}
+                    </div>
                 </div>
-            )}
+            </section>
 
-            {showForm && (
-                <form onSubmit={handleCreateSongInPlaylist} className="mt-4">
-                    <input
-                        type="url"
-                        placeholder="Song URL"
-                        value={externalUrl}
-                        onChange={(e) => setExternalUrl(e.target.value)}
-                        className="p-2 mr-2 rounded text-white bg-slate-500"
-                    />
-
-                    <button type="submit" className="ml-2 bg-blue-500 px-3 py-2 rounded cursor-pointer">
-                        Save
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => {
-                            setShowForm(false);
-                            setExternalUrl("");
-                        }}
-                        className="ml-2 bg-red-500 px-3 py-2 rounded cursor-pointer"
-                    >
-                        Cancel
-                    </button>
-                </form>
-            )}
-
-            {/* Confirmation message */}
-            {
-                submitStatus === "success" && (
-                    <div className="mt-8 mb-4 p-3 bg-green-500 text-black rounded text-center transition-all">
-                        ✅ Song added successfully!
+            <section className="px-6 py-8 sm:px-8 lg:px-10">
+                <div className="flex flex-col gap-4 border-b border-white/10 pb-5 sm:flex-row sm:items-end sm:justify-between">
+                    <div>
+                        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300/70">Playlist collection</p>
+                        <h2 className="mt-2 text-3xl font-semibold text-white">All Songs</h2>
                     </div>
-                )
-            }
-
-            {
-                submitStatus === "error" && (
-                    <div className="mt-8 mb-4 p-3 bg-red-500 text-black rounded text-center transition-all">
-                        {/* If there's a specific error message (like song already in playlist), show it. Otherwise, show a generic error message. */}
-                        {errorMessage ? `❌ Error: ${errorMessage}` : "❌ Error adding song. Please try again."}
+                    <div className="flex items-center gap-2">
+                        <button type="button" className="playlist-toolbar-button"><FaSliders aria-hidden="true" />Sorting</button>
+                        <button type="button" className="playlist-toolbar-button"><FaPen aria-hidden="true" />Bulk Editing</button>
                     </div>
-                )
-            }
+                </div>
 
-            {
-                submitStatus === "loading" && (
-                    <div className="mt-8 mb-4 p-3 bg-blue-500 text-black rounded text-center transition-all">
-                        ⏳ Adding song...
+                {songs.length === 0 ? <div className="py-16 text-center text-slate-400">No songs in this playlist yet.</div> : (
+                    <div className="playlist-songs-viewport mt-6">
+                        <div className="playlist-songs-grid">
+                            {songs.map((song) => (
+                                <article key={song.id} className="vinyl-card" onClick={() => router.push(`/library/${playlistId}/player/${song.id}`)}>
+                                    <div className="vinyl-artwork">
+                                        <div className="vinyl-disc" aria-hidden="true"><span /></div>
+                                        {song.imageUrl ? <img src={song.imageUrl} alt={song.title} className="vinyl-cover" /> : <div className="vinyl-cover flex items-center justify-center bg-slate-800 text-xs text-slate-500">No image</div>}
+                                        <div className="vinyl-play" aria-hidden="true"><FaPlay /></div>
+                                        <button type="button" aria-label={`Edit ${song.title}`} title="Edit song" onClick={(event) => event.stopPropagation()} className="vinyl-edit"><FaPen /></button>
+                                    </div>
+                                    <h3 className="mt-3 truncate text-sm font-semibold text-white">{song.title}</h3>
+                                    <p className="mt-1 truncate text-sm text-slate-500">{song.artist}</p>
+                                </article>
+                            ))}
+                        </div>
                     </div>
-                )
-            }
+                )}
+            </section>
         </main>
     );
 }
