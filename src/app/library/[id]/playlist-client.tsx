@@ -165,7 +165,9 @@ export default function PlaylistClient({ playlistId }: { playlistId: number }) {
                                 <article key={song.id} className="vinyl-card" onClick={() => router.push(`/library/${playlistId}/player/${song.id}`)}>
                                     <div className="vinyl-artwork">
                                         <div className="vinyl-disc" aria-hidden="true"><span /></div>
-                                        {song.imageUrl ? <img src={song.imageUrl} alt={song.title} className="vinyl-cover" /> : <div className="vinyl-cover flex items-center justify-center bg-slate-800 text-xs text-slate-500">No image</div>}
+                                        <div className="vinyl-cover-frame">
+                                            {song.imageUrl ? <img src={song.imageUrl} alt={song.title} className="vinyl-cover" /> : <div className="flex h-full w-full items-center justify-center bg-slate-800 text-xs text-slate-500">No image</div>}
+                                        </div>
                                         <div className="vinyl-play" aria-hidden="true"><FaPlay /></div>
                                         <button type="button" aria-label={`Edit ${song.title}`} title="Edit song" onClick={(event) => event.stopPropagation()} className="vinyl-edit"><FaPen /></button>
                                     </div>
