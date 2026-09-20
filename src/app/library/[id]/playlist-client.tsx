@@ -189,7 +189,7 @@ export default function PlaylistClient({ playlistId }: { playlistId: number }) {
                                     <p className="mt-0.5 truncate text-sm text-slate-400">{song.artist}</p>
                                     <p className={`flex mt-0.5 items-center gap-1 text-sm ${song.userRating != null ? "text-amber-300" : "text-slate-500"}`}>
                                         {song.userRating != null ? <FaStar aria-hidden="true" /> : <FaRegStar aria-hidden="true" />}
-                                        <span>{song.userRating ?? "No rated yet"}</span>
+                                        <span>{song.userRating ?? "0"}</span>
                                     </p>
                                 </article>
                             ))}
