@@ -164,7 +164,11 @@ export default function PlaylistClient({ playlistId }: { playlistId: number }) {
                             {songs.map((song) => (
                                 <article key={song.id} className="vinyl-card" onClick={() => router.push(`/library/${playlistId}/player/${song.id}`)}>
                                     <div className="vinyl-artwork">
-                                        <div className="vinyl-disc" aria-hidden="true"><span /></div>
+                                        <div className="vinyl-disc" aria-hidden="true">
+                                            <div className="vinyl-label">
+                                                <span className="vinyl-hole" />
+                                            </div>
+                                        </div>
                                         <div className="vinyl-cover-frame">
                                             {song.imageUrl ? <img src={song.imageUrl} alt={song.title} className="vinyl-cover" /> : <div className="flex h-full w-full items-center justify-center bg-slate-800 text-xs text-slate-500">No image</div>}
                                         </div>

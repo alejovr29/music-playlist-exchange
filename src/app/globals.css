@@ -229,29 +229,56 @@ body {
 .vinyl-disc {
   position: absolute;
   z-index: 1;
-  top: 0;
-  right: 0;
+  top: 5px;
+  right: -4px;
   width: 80%;
-  height: 100%;
+  height: 95%;
   border: 1px solid rgb(226 232 240 / 18%);
   border-radius: 999px;
-  background: radial-gradient(circle at center, #94a3b8 0 4%, #0f172a 4.5% 11%, #334155 11.5% 12%, #020617 12.5% 25%, #111827 25.5% 22%, #020617 26.5% 46%, #1e293b 46.5% 47%, #020617 47.5% 100%);
+  background:
+    repeating-radial-gradient(circle at center,
+      rgb(255 255 255 / 3%) 0,
+      rgb(255 255 255 / 3%) 1px,
+      transparent 1px,
+      transparent 4px),
+    conic-gradient(from 45deg,
+      #080b12 0deg,
+      #565b63 40deg,
+      #080b12 80deg,
+      #080b12 180deg,
+      #565b63 220deg,
+      #080b12 260deg,
+      #080b12 360deg);
   box-shadow: 0 15px 25px rgb(0 0 0 / 45%);
   transition: transform 240ms ease;
 }
 
-.vinyl-disc span {
+.vinyl-label {
   position: absolute;
-  inset: 45%;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  width: 34%;
+  aspect-ratio: 1;
+  align-items: center;
+  justify-content: center;
   border-radius: 999px;
-  background: #67e8f9;
-  box-shadow: 0 0 10px rgb(103 232 249 / 50%);
+  background: #f8fafc;
+  box-shadow: inset 0 0 4px rgb(0 0 0 / 35%);
+  transform: translate(-50%, -50%);
+}
+
+.vinyl-hole {
+  width: 14%;
+  aspect-ratio: 1;
+  border-radius: 999px;
+  background: #1a1a1a;
 }
 
 .vinyl-play {
   position: absolute;
   z-index: 3;
-  top: 45%;
+  top: 50%;
   left: 76%;
   display: flex;
   height: 3rem;
@@ -259,36 +286,39 @@ body {
   align-items: center;
   justify-content: center;
   border-radius: 999px;
-  background: #67e8f9;
+  background: #e9e9e9;
   color: #082f49;
   opacity: 0;
   transform: translate(-50%, -50%) scale(0.8);
-  transition: opacity 220ms ease, transform 220ms ease;
+  transition: opacity 240ms ease, transform 220ms ease;
 }
 
 .vinyl-edit {
   position: absolute;
   z-index: 4;
   top: 0.5rem;
-  left: 0.5rem;
   display: flex;
   height: 2.5rem;
   width: 2.5rem;
   align-items: center;
   justify-content: center;
   border-radius: 999px;
-  background: rgb(2 6 23 / 72%);
+  background: rgb(2 6 23 / 32%);
   color: rgb(226 232 240 / 80%);
   opacity: 0;
-  transition: opacity 180ms ease, color 180ms ease;
+  transition: opacity 180ms ease, color 180ms ease, transform 240ms ease, background 180ms ease;
 }
 
 .vinyl-edit:hover {
   color: #a5f3fc;
+  background: rgb(2 6 23 / 72%);
+  cursor: pointer;
+  transform: rotate(-60deg);
+  transition: transform 240ms ease, opacity 180ms ease, color 180ms, background 180ms ease;
 }
 
 .vinyl-card:hover .vinyl-cover-frame {
-  transform: translateX(-8%);
+  transform: translateX(-11%);
   box-shadow: 0 18px 28px rgb(0 0 0 / 45%);
 }
 
@@ -303,6 +333,8 @@ body {
 
 .vinyl-card:hover .vinyl-play {
   transform: translate(-50%, -50%) scale(1);
+  color: #00bcff;
+  box-shadow: inset 0 0 4px rgba(100, 100, 100, 0.55);
 }
 
 .vinyl-card h3 {
