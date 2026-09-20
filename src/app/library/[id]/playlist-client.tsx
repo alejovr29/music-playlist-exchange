@@ -108,13 +108,13 @@ export default function PlaylistClient({ playlistId }: { playlistId: number }) {
                     <div className="flex items-start justify-between gap-6">
                         <div className="min-w-0">
                             <div className="flex items-center gap-2 text-sm text-slate-300">
-                                <button type="button" onClick={() => router.push("/library")} className="transition hover:text-cyan-200">Library</button>
+                                <button type="button" onClick={() => router.push("/library")} className="transition hover:text-cyan-200 cursor-pointer">Library</button>
                                 <FaArrowRight className="text-xs text-cyan-300/70" aria-hidden="true" />
                                 <span className="truncate text-slate-500">{playlist?.name}</span>
                             </div>
                             <div className="mt-4 flex items-center gap-3">
                                 <h1 className="truncate text-3xl font-semibold tracking-tight text-white sm:text-4xl">{playlist?.name}</h1>
-                                <span title={`${playlist?.platform} playlist`} className="shrink-0 text-2xl">{platformIcon}</span>
+                                <span title={`${playlist?.platform} playlist`} className="shrink-0 text-2xl cursor-help">{platformIcon}</span>
                             </div>
                         </div>
                         <button type="button" aria-label="Playlist settings" title="Playlist settings" className="playlist-icon-button"><FaGear aria-hidden="true" /></button>
@@ -130,7 +130,7 @@ export default function PlaylistClient({ playlistId }: { playlistId: number }) {
                             <button type="button" onClick={() => setShowForm((visible) => !visible)} className="playlist-primary-button"><FaPlus aria-hidden="true" />Add Song</button>
                             <span className="text-slate-500">|</span>
                             <button type="button" onClick={() => songs[0] && router.push(`/library/${playlistId}/player/${songs[0].id}`)} disabled={songs.length === 0} className="playlist-action-button disabled:cursor-not-allowed disabled:opacity-40"><FaPlay aria-hidden="true" />Listen</button>
-                            <button type="button" aria-label="Save playlist as favorite" title="Save as favorite" className="playlist-action-button px-2 hover:text-rose-300"><FaHeart aria-hidden="true" /></button>
+                            <button type="button" aria-label="Save playlist as favorite" title="Save as favorite" className="playlist-action-button px-2 hover:text-rose-300!"><FaHeart aria-hidden="true" /></button>
                         </div>
 
                         {showForm && (
