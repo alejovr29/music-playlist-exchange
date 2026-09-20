@@ -12,6 +12,8 @@ import {
     FaPlay,
     FaPlus,
     FaSliders,
+    FaEyeSlash,
+    FaEye,
 } from "react-icons/fa6";
 import { MdMusicOff } from "react-icons/md";
 
@@ -115,6 +117,14 @@ export default function PlaylistClient({ playlistId }: { playlistId: number }) {
                             <div className="mt-4 flex items-center gap-3">
                                 <h1 className="truncate text-3xl font-semibold tracking-tight text-white sm:text-4xl">{playlist?.name}</h1>
                                 <span title={`${playlist?.platform} playlist`} className="shrink-0 text-2xl cursor-help">{platformIcon}</span>
+                                <span> | </span>
+                                <span title="Playlist visibility" className="text-sm text-slate-400 cursor-help ">{playlist?.isPublic ?
+                                    <span className="flex items-center gap-1">
+                                        <FaEye /> <span>Public</span>
+                                    </span> :
+                                    <span className="flex items-center gap-1">
+                                        <FaEyeSlash /> <span>Private</span>
+                                    </span>}</span>
                             </div>
                         </div>
                         <button type="button" aria-label="Playlist settings" title="Playlist settings" className="playlist-icon-button"><FaGear aria-hidden="true" /></button>
