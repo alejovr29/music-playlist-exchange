@@ -54,11 +54,27 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
         orderBy: {
             createdAt: "desc",
         },
-        include: { song: true },
+        include: {
+            song: {
+                include: {
+                    votes: {
+                        where: {
+                            userId: user.id,
+                        },
+                        select: {
+                            value: true,
+                        },
+                    },
+                },
+            },
+        },
     });
 
     // Extract songs from the playlistSongs to return only the song information in the response, because otherwise it would return the playlistSong information and we would have to use song.song to access the song information in the frontend, which is not ideal
-    const songs = playlistSongs.map((ps) => ps.song);
+    const songs = playlistSongs.map((playlistSong) => ({
+        ...playlistSong.song,
+        userRating: playlistSong.song.votes[0]?.value ?? null,
+    }));
 
     // Return the songs as JSON response
     return NextResponse.json({ playlist, songs });

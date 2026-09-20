@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Playlist, Song } from "@/types/music";
-import { FaYoutube, FaSpotify } from "react-icons/fa";
+import { FaYoutube, FaSpotify, FaStar, FaRegStar } from "react-icons/fa";
 import {
     FaArrowRight,
     FaGear,
@@ -140,7 +140,7 @@ export default function PlaylistClient({ playlistId }: { playlistId: number }) {
                             <button type="button" onClick={() => setShowForm((visible) => !visible)} className="playlist-primary-button"><FaPlus aria-hidden="true" />Add Song</button>
                             <span className="text-slate-500">|</span>
                             <button type="button" onClick={() => songs[0] && router.push(`/library/${playlistId}/player/${songs[0].id}`)} disabled={songs.length === 0} className="playlist-action-button disabled:cursor-not-allowed disabled:opacity-40"><FaPlay aria-hidden="true" />Listen</button>
-                            <button type="button" aria-label="Save playlist as favorite" title="Save as favorite" className="playlist-action-button px-2 hover:text-rose-300!"><FaHeart aria-hidden="true" /></button>
+                            <button type="button" aria-label="Save playlist as favorite" title="Save as favorite" className="playlist-action-button px-2 hover:text-red-400!"><FaHeart aria-hidden="true" /></button>
                         </div>
 
                         {showForm && (
@@ -185,8 +185,12 @@ export default function PlaylistClient({ playlistId }: { playlistId: number }) {
                                         <div className="vinyl-play" aria-hidden="true"><FaPlay /></div>
                                         <button type="button" aria-label={`Edit ${song.title}`} title="Edit song" onClick={(event) => event.stopPropagation()} className="vinyl-edit"><FaPen /></button>
                                     </div>
-                                    <h3 className="truncate text-sm font-semibold text-white">{song.title}</h3>
-                                    <p className="mt-1 mb-3 truncate text-sm text-slate-500">{song.artist}</p>
+                                    <h3 className="truncate text-sm font-semibold text-white mt-2">{song.title}</h3>
+                                    <p className="mt-0.5 truncate text-sm text-slate-400">{song.artist}</p>
+                                    <p className={`flex mt-0.5 items-center gap-1 text-sm ${song.userRating != null ? "text-amber-300" : "text-slate-500"}`}>
+                                        {song.userRating != null ? <FaStar aria-hidden="true" /> : <FaRegStar aria-hidden="true" />}
+                                        <span>{song.userRating ?? "No rated yet"}</span>
+                                    </p>
                                 </article>
                             ))}
                         </div>

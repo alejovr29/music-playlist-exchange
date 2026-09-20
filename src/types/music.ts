@@ -8,6 +8,7 @@ export interface Song {
   imageUrl?: string | null;
   externalUrl: string;
   platform: Platform;
+  userRating?: number | null;
 }
 
 export interface Playlist {
